@@ -182,12 +182,44 @@ document.getElementById("next").addEventListener("click", () => {
   playSongByIndex(currentSongIndex);
 });
 
-
+// auto play next song when current ends
 audio.addEventListener("ended", () => {
   if (songs.length === 0) return;
   currentSongIndex = (currentSongIndex + 1) % songs.length;
   playSongByIndex(currentSongIndex);
 });
+
+// Keyboard controls
+document.addEventListener("keydown", (e) => {
+  // Spacebar → Play / Pause
+  if (e.code === "Space") {
+    e.preventDefault(); // Prevent page from scrolling
+    if (audio.paused || audio.currentTime <= 0) {
+      audio.play();
+      masterPlay.classList.remove("fa-play-circle");
+      masterPlay.classList.add("fa-pause-circle");
+      playingGif.style.opacity = 1;
+    } else {
+      audio.pause();
+      masterPlay.classList.remove("fa-pause-circle");
+      masterPlay.classList.add("fa-play-circle");
+      playingGif.style.opacity = 0;
+    }
+  }
+
+  // Arrow Up → Increase Volume
+  if (e.code === "ArrowUp") {
+    e.preventDefault();
+    audio.volume = Math.min(1, audio.volume + 0.05); // Increase by 5%
+  }
+
+  // Arrow Down → Decrease Volume
+  if (e.code === "ArrowDown") {
+    e.preventDefault();
+    audio.volume = Math.max(0, audio.volume - 0.05); // Decrease by 5%
+  }
+});
+
 
 // Init app with trending songs
 (function init() {
