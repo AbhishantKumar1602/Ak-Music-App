@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>About Us - My Music App</title>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background-color: #121212;
+        color: white;
+        overflow-x: hidden;
+    }
+
+    /* Hero Section */
+    .hero {
+        position: relative;
+        height: 60vh;
+        background: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hero::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+    }
+
+    .hero-text {
+        position: relative;
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-align: center;
+        animation: fadeInUp 2s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from { transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* About Content */
+    .about-container {
+        max-width: 900px;
+        margin: -50px auto 0;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        text-align: center;
+        animation: fadeIn 2s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        background: linear-gradient(90deg, #1DB954, #1ed760);
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #ccc;
+    }
+
+    /* Button Style */
+    .btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 25px;
+        border-radius: 25px;
+        background: #1DB954;
+        color: black;
+        text-decoration: none;
+        font-weight: bold;
+        transition: transform 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: scale(1.05);
+    }
+</style>
+</head>
+<body>
+
+<!-- Hero Section -->
+<div class="hero">
+    <div class="hero-text">🎵 Experience Music Like Never Before 🎶</div>
+</div>
+
+<!-- About Section -->
+<div class="about-container">
+    <h1>About Our Music App</h1>
+    <p>
+        Welcome to our music streaming platform, your ultimate destination for high-quality sound and endless playlists. 
+        We bring together your favorite artists, personalized recommendations, and exclusive tracks — all in one place.
+        Whether you're relaxing at home or on the go, our app delivers music that matches your vibe.
+    </p>
+    <a href="index.html" class="btn">Back to Home</a>
+</div>
+
+</body>
+</html>

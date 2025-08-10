@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AK Music App</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <ul>
+      <li class="brand">
+        <img src="logo.png" alt="AK Music App Logo" />AK Songs
+      </li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li> 
+    </ul>
+  </nav>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search songs..." />
+  </div>
+
+  <!-- Song List -->
+  <div class="container">
+    <div class="songList">
+      <h1>Best of AK Playlist</h1>
+      <div class="songItemContainer" id="songList">
+        <!-- Songs will be loaded dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Player -->
+  <div class="bottom">
+    <input type="range" id="myProgressBar" value="0" min="0" max="100" />
+
+    <div class="time-display">
+      <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+    </div>
+
+    <div class="controls">
+      <i class="fas fa-2x fa-step-backward" id="previous"></i>
+      <i class="far fa-2x fa-play-circle" id="masterPlay"></i>
+      <i class="fas fa-2x fa-step-forward" id="next"></i>
+    </div>
+
+    <div class="songInfo" id="songInfo">
+      <img src="playing.gif" width="50px" id="playingGif" style="opacity: 0" />
+      <span id="currentSongName"></span>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
