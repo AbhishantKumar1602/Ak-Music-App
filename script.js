@@ -240,5 +240,13 @@ document.addEventListener("keydown", (e) => {
 
 // Init app with trending songs
 (function init() {
+<<<<<<< HEAD
     searchSongsOnline(searchSongQuery);
 })();
+=======
+  searchSongsOnline(searchSongQuery);
+})();
+
+
+
+>>>>>>> 2bc78d9574e0da001115d5c71a1212e138736f17
