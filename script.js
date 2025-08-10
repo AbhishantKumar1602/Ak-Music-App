@@ -191,10 +191,14 @@ audio.addEventListener("ended", () => {
 
 // Keyboard controls
 document.addEventListener("keydown", (e) => {
-  // Spacebar → Play / Pause
   if (e.code === "Space") {
     e.preventDefault(); // Prevent page from scrolling
-    if (audio.paused || audio.currentTime <= 0) {
+    if (!audio.src || audio.src.trim() === "") {
+      // No song loaded → start first song
+      if (songs.length > 0) {
+        playSongByIndex(currentSongIndex); // currentSongIndex is 0 initially
+      }
+    } else if (audio.paused || audio.currentTime <= 0) {
       audio.play();
       masterPlay.classList.remove("fa-play-circle");
       masterPlay.classList.add("fa-pause-circle");
