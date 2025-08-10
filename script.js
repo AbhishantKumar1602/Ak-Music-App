@@ -16,16 +16,16 @@ let songs = []; // dynamic list
 
 // Local fallback songs
 const localSongs = [
-  {
-    name: "Warriyo - Mortals",
-    filePath: "songs/1.mp3",
-    coverPath: "covers/1.jpg"
-  },
-  {
-    name: "Cielo - Huma-Huma",
-    filePath: "songs/2.mp3",
-    coverPath: "covers/2.jpg"
-  },
+  { name: "Legions - Mortals", filePath: "songs/1.mp3", coverPath: "covers/1.jpg" },
+  { name: "Trap Cartel - Huma-Huma", filePath: "songs/2.mp3", coverPath: "covers/2.jpg" },
+  { name: "They MAD - Alan Walker", filePath: "songs/3.mp3", coverPath: "covers/3.jpg" },
+  { name: "Rich THE Kid - Alan Walker", filePath: "songs/4.mp3", coverPath: "covers/4.jpg" },
+  { name: "Alone - Marshmello", filePath: "songs/5.mp3", coverPath: "covers/5.jpg" },
+  { name: "Safety Dance - Marshmello", filePath: "songs/6.mp3", coverPath: "covers/6.jpg" },
+  { name: "Back It Up - OneRepublic", filePath: "songs/7.mp3", coverPath: "covers/7.jpg" },
+  { name: "BeAware - OneRepublic", filePath: "songs/8.mp3", coverPath: "covers/8.jpg" },
+  { name: "Beast - OneRepublic", filePath: "songs/9.mp3", coverPath: "covers/9.jpg" },
+  { name: "Tryhard - OneRepublic", filePath: "songs/10.mp3", coverPath: "covers/10.jpg" },
 ];
 
 
@@ -62,7 +62,6 @@ function renderSongs(songArray) {
   });
 }
 
-
 // Play a song
 function playSongByIndex(index) {
   currentSongIndex = index;
@@ -74,7 +73,6 @@ function playSongByIndex(index) {
   playingGif.style.opacity = 1;
   currentSongName.innerText = song.name;
 }
-
 
 // Toggle master play/pause
 masterPlay.addEventListener("click", () => {
@@ -98,7 +96,6 @@ masterPlay.addEventListener("click", () => {
   }
 });
 
-
 // Update progress bar
 audio.addEventListener("timeupdate", () => {
   if (!isNaN(audio.duration)) {
@@ -109,13 +106,11 @@ audio.addEventListener("timeupdate", () => {
   }
 });
 
-
 myProgressBar.addEventListener("input", () => {
   if (!isNaN(audio.duration)) {
     audio.currentTime = (myProgressBar.value * audio.duration) / 100;
   }
 });
-
 
 // Fetch songs from JioSaavn API with randomness & larger pool
 async function searchSongsOnline(query) {
@@ -154,7 +149,6 @@ async function searchSongsOnline(query) {
   }
 }
 
-
 // Search input listener
 searchInput.addEventListener("input", (e) => {
   const query = e.target.value.trim();
@@ -166,14 +160,12 @@ searchInput.addEventListener("input", (e) => {
   }
 });
 
-
 // Previous button
 document.getElementById("previous").addEventListener("click", () => {
   if (songs.length === 0) return;
   currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
   playSongByIndex(currentSongIndex);
 });
-
 
 // Next button
 document.getElementById("next").addEventListener("click", () => {
@@ -191,6 +183,11 @@ audio.addEventListener("ended", () => {
 
 // Keyboard controls
 document.addEventListener("keydown", (e) => {
+  // Ignore keyboard shortcuts if typing in an input or textarea
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
+    return;
+  }
+
   if (e.code === "Space") {
     e.preventDefault(); // Prevent page from scrolling
     if (!audio.src || audio.src.trim() === "") {
@@ -222,8 +219,23 @@ document.addEventListener("keydown", (e) => {
     e.preventDefault();
     audio.volume = Math.max(0, audio.volume - 0.05); // Decrease by 5%
   }
-});
 
+  // Arrow Right → Next song
+  if (e.code === "ArrowRight") {
+    e.preventDefault();
+    if (songs.length === 0) return;
+    currentSongIndex = (currentSongIndex + 1) % songs.length;
+    playSongByIndex(currentSongIndex);
+  }
+
+  // Arrow Left → Previous song
+  if (e.code === "ArrowLeft") {
+    e.preventDefault();
+    if (songs.length === 0) return;
+    currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+    playSongByIndex(currentSongIndex);
+  }
+});
 
 // Init app with trending songs
 (function init() {
