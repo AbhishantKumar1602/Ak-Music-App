@@ -1,4 +1,4 @@
-const searchSongQuery = "Best trending songs"; // default search query
+const searchSongQuery = "Best songs"; // default search query
 const searchInput = document.getElementById("searchInput");
 const songList = document.getElementById("songList");
 const masterPlay = document.getElementById("masterPlay");
