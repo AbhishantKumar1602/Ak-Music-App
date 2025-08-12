@@ -9,9 +9,11 @@ const currentSongName = document.getElementById("currentSongName");
 const playingGif = document.getElementById("playingGif");
 
 
+
 let audio = new Audio();
 let currentSongIndex = 0;
 let songs = []; // dynamic list
+
 
 
 // Local fallback songs
@@ -29,6 +31,7 @@ const localSongs = [
 ]; 
 
 
+
 // Format time in mm:ss
 function formatTime(sec) {
     if (isNaN(sec)) return "0:00";
@@ -38,6 +41,17 @@ function formatTime(sec) {
 }
 
 
+
+// Reset Play Button to Default Play Icon Into Every songItem
+function resetSongItemIcons() {
+    document.querySelectorAll(".songPlay").forEach(icon => {
+        icon.classList.remove("fa-pause-circle");
+        icon.classList.add("fa-play-circle");
+    });
+}
+
+
+
 // Load songs to Home Page
 function renderSongs(songArray) {
     songList.innerHTML = "";
@@ -45,16 +59,16 @@ function renderSongs(songArray) {
         const displayName = song.name.length > 30 ? song.name.substring(0, 30) + "..." : song.name;
         const songItem = document.createElement("div");
         songItem.className = "songItem";
-        songItem.dataset.index = index; // store index on parent
+        songItem.dataset.index = index;
         songItem.innerHTML = `
-      <img src="${song.coverPath}" alt="cover" />
-      <span>${displayName}</span>
-      <i class="fas fa-play-circle songPlay"></i>
-    `;
+            <img src="${song.coverPath}" alt="cover" />
+            <span>${displayName}</span>
+            <i class="fas fa-play-circle songPlay" data-index="${index}"></i>
+        `;
         songList.appendChild(songItem);
     });
 
-    // Add click listeners on songItem
+    // Play button in song list
     document.querySelectorAll(".songItem").forEach(item => {
         item.addEventListener("click", (e) => {
             playSongByIndex(parseInt(item.dataset.index));
@@ -62,17 +76,31 @@ function renderSongs(songArray) {
     });
 }
 
+
+
 // Play a song
 function playSongByIndex(index) {
     currentSongIndex = index;
     const song = songs[index];
     audio.src = song.filePath;
     audio.play();
+
+    resetSongItemIcons();
+
+    // Update play icon for the current song
+    const activeIcon = document.querySelector(`.songPlay[data-index="${index}"]`);
+    if (activeIcon) {
+        activeIcon.classList.remove("fa-play-circle");
+        activeIcon.classList.add("fa-pause-circle");
+    }
+
     masterPlay.classList.remove("fa-play-circle");
     masterPlay.classList.add("fa-pause-circle");
     playingGif.style.opacity = 1;
     currentSongName.innerText = song.name;
 }
+
+
 
 // Toggle master play/pause
 masterPlay.addEventListener("click", () => {
@@ -96,6 +124,37 @@ masterPlay.addEventListener("click", () => {
     }
 });
 
+
+
+audio.addEventListener("pause", () => {
+    masterPlay.classList.remove("fa-pause-circle");
+    masterPlay.classList.add("fa-play-circle");
+    playingGif.style.opacity = 0;
+
+    // Reset current song's icon to play
+    const activeIcon = document.querySelector(`.songPlay[data-index="${currentSongIndex}"]`);
+    if (activeIcon) {
+        activeIcon.classList.remove("fa-pause-circle");
+        activeIcon.classList.add("fa-play-circle");
+    }
+});
+
+audio.addEventListener("play", () => {
+    masterPlay.classList.remove("fa-play-circle");
+    masterPlay.classList.add("fa-pause-circle");
+    playingGif.style.opacity = 1;
+
+    // Highlight current song's icon as pause
+    resetSongItemIcons();
+    const activeIcon = document.querySelector(`.songPlay[data-index="${currentSongIndex}"]`);
+    if (activeIcon) {
+        activeIcon.classList.remove("fa-play-circle");
+        activeIcon.classList.add("fa-pause-circle");
+    }
+});
+
+
+
 // Update progress bar
 audio.addEventListener("timeupdate", () => {
     if (!isNaN(audio.duration)) {
@@ -112,10 +171,12 @@ myProgressBar.addEventListener("input", () => {
     }
 });
 
-// Fetch songs from JioSaavn API with randomness & larger pool
+
+
+// Fetch songs from JioSaavn API
 async function searchSongsOnline(query) {
     try {
-        const limit = 100; // bigger pool
+        const limit = 100;  // But API Only Return 40 Songs in Output
         const res = await fetch(
             `https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&pages=9&limit=${limit}`
         );
@@ -150,6 +211,8 @@ async function searchSongsOnline(query) {
     }
 }
 
+
+
 // Search input listener
 searchInput.addEventListener("input", (e) => {
     const query = e.target.value.trim();
@@ -160,6 +223,8 @@ searchInput.addEventListener("input", (e) => {
         renderSongs(songs);
     }
 });
+
+
 
 // Previous button
 document.getElementById("previous").addEventListener("click", () => {
@@ -184,17 +249,16 @@ audio.addEventListener("ended", () => {
 
 // Keyboard controls
 document.addEventListener("keydown", (e) => {
-    // Ignore keyboard shortcuts if typing in an input or textarea
+    // Ignore New keyboard shortcuts when Song searching
     if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
         return;
     }
 
     if (e.code === "Space") {
-        e.preventDefault(); // Prevent page from scrolling
-        if (!audio.src || audio.src.trim() === "") {
-            // No song loaded → start first song
-            if (songs.length > 0) {
-                playSongByIndex(currentSongIndex); // currentSongIndex is 0 initially
+        e.preventDefault(); // Like scrolling
+        if (!audio.src || audio.src.trim() === "") { // No song is playing or loaded
+            if (songs.length > 0) { // Means if song Exist Then Play first song by 0 index
+                playSongByIndex(currentSongIndex);
             }
         } else if (audio.paused || audio.currentTime <= 0) {
             audio.play();
@@ -238,7 +302,9 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-// Init app with trending songs
+
+
+// First Initialization For Load Songs
 (function init() {
     searchSongsOnline(searchSongQuery);
 })();
