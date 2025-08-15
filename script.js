@@ -302,6 +302,25 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
+// Download button
+document.getElementById("downloadSong").addEventListener("click", () => {
+    if (songs.length === 0 || !songs[currentSongIndex]) return;
+
+    const song = songs[currentSongIndex];
+    if (!song.filePath) {
+        alert("No download link available for this song.");
+        return;
+    }
+
+    const link = document.createElement("a");
+    link.href = song.filePath;
+    // Safe file name
+    link.download = song.name.replace(/[^\w\s-]/g, "_") + ".mp3";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
 
 
 // First Initialization For Load Songs
