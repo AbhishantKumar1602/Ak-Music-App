@@ -302,24 +302,98 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-// Download button
+
+// document.getElementById("downloadSong").addEventListener("click", async () => {
+//     if (songs[currentSongIndex] && songs[currentSongIndex].filePath) {
+//         const fileUrl = songs[currentSongIndex].filePath;
+//         const fileName = songs[currentSongIndex].name.replace(/[^a-z0-9]/gi, "_") + ".mp3";
+
+//         try {
+//             // Fetch the file as a blob
+//             const response = await fetch(fileUrl, { mode: "cors" });
+//             const blob = await response.blob();
+
+//             // Create a temporary link
+//             const a = document.createElement("a");
+//             const objectUrl = URL.createObjectURL(blob);
+//             a.href = objectUrl;
+//             a.download = fileName;  // Force download
+//             document.body.appendChild(a);
+//             a.click();
+//             document.body.removeChild(a);
+
+//             // Free memory
+//             URL.revokeObjectURL(objectUrl);
+//         } catch (err) {
+//             alert("Failed to download: " + err);
+//         }
+//     } else {
+//         alert("No song is currently selected for download!");
+//     }
+// });
+
+
+
+
 document.getElementById("downloadSong").addEventListener("click", () => {
-    if (songs.length === 0 || !songs[currentSongIndex]) return;
+    if (songs[currentSongIndex] && songs[currentSongIndex].filePath) {
+        const fileUrl = songs[currentSongIndex].filePath;
+        const fileName = songs[currentSongIndex].name.replace(/[^a-z0-9]/gi, "_") + ".mp3";
 
-    const song = songs[currentSongIndex];
-    if (!song.filePath) {
-        alert("No download link available for this song.");
-        return;
+        // Show status section
+        const statusBox = document.getElementById("downloadStatus");
+        const statusText = document.getElementById("statusText");
+        const progressBar = document.getElementById("downloadProgress");
+        statusBox.style.display = "block";
+        statusText.textContent = "Starting download...";
+        progressBar.value = 0;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", fileUrl, true);
+        xhr.responseType = "blob";
+
+        // Track progress
+        xhr.onprogress = function (event) {
+            if (event.lengthComputable) {
+                let percent = (event.loaded / event.total) * 100;
+                progressBar.value = percent;
+                statusText.textContent = `Downloading... ${percent.toFixed(1)}%`;
+            } else {
+                statusText.textContent = "Downloading...";
+            }
+        };
+
+        // On complete
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                statusText.textContent = "Download finished!";
+                const blob = xhr.response;
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } else {
+                statusText.textContent = "Download failed!";
+                alert("Failed to download. Server error.");
+            }
+        };
+
+        // On error
+        xhr.onerror = function () {
+            statusText.textContent = "Download failed!";
+            alert("Failed to download. Network error.");
+        };
+
+        xhr.send();
+    } else {
+        alert("No song is currently selected for download!");
     }
-
-    const link = document.createElement("a");
-    link.href = song.filePath;
-    // Safe file name
-    link.download = song.name.replace(/[^\w\s-]/g, "_") + ".mp3";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 });
+
 
 
 

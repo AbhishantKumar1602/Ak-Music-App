@@ -41,14 +41,24 @@
           <div class="time-display">
               <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
           </div>
-          <div class="controls">
-              <i class="fas fa-2x fa-step-backward" id="previous"></i>
-              <i class="far fa-2x fa-play-circle" id="masterPlay"></i>
-              <i class="fas fa-2x fa-step-forward" id="next"></i>
+            <div class="bottom-row">
+              <!-- Empty div for left side (so center works properly) -->
+              <div class="left-placeholder"></div>
 
+              <!-- Controls centered -->
+              <div class="controls">
+                  <i class="fas fa-2x fa-step-backward" id="previous"></i>
+                  <i class="far fa-2x fa-play-circle" id="masterPlay"></i>
+                  <i class="fas fa-2x fa-step-forward" id="next"></i>
+              </div>
 
+              <!-- Download aligned right -->
               <i class="fas fa-2x fa-download" id="downloadSong" title="Download Current Song"></i>
-          </div>
+              <div id="downloadStatus" style="margin-top:10px; display:none;">
+                  <p id="statusText">Preparing download...</p>
+                  <progress id="downloadProgress" value="0" max="100" style="width:300px;"></progress>
+              </div>
+            </div>
           <div class="songInfo" id="songInfo">
               <img src="playing.gif" width="50px" id="playingGif" style="opacity: 0" />
               <span id="currentSongName"></span>

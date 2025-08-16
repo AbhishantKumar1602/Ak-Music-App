@@ -184,9 +184,35 @@ nav ul li a.active {
 }
 
 .controls {
-	display: flex;
-	gap: 30px;
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex: 1;
 }
+
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.left-placeholder {
+  width: 40px; /* same width as download icon for balance */
+}
+
+#downloadSong {
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+  margin-right: 20px;
+}
+
+#downloadSong:hover {
+  transform: scale(1.2);
+  color: var(--spotify-green);
+}
+
+
 
 .controls i {
 	transition: transform 0.2s ease, color 0.2s ease;
