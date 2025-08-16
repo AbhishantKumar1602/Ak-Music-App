@@ -334,7 +334,6 @@ document.addEventListener("keydown", (e) => {
 
 
 
-
 document.getElementById("downloadSong").addEventListener("click", () => {
     if (songs[currentSongIndex] && songs[currentSongIndex].filePath) {
         const fileUrl = songs[currentSongIndex].filePath;
@@ -345,7 +344,7 @@ document.getElementById("downloadSong").addEventListener("click", () => {
         const statusText = document.getElementById("statusText");
         const progressBar = document.getElementById("downloadProgress");
         statusBox.style.display = "block";
-        statusText.textContent = "Starting download...";
+        statusText.textContent = "";
         progressBar.value = 0;
 
         const xhr = new XMLHttpRequest();
@@ -357,7 +356,7 @@ document.getElementById("downloadSong").addEventListener("click", () => {
             if (event.lengthComputable) {
                 let percent = (event.loaded / event.total) * 100;
                 progressBar.value = percent;
-                statusText.textContent = `Downloading... ${percent.toFixed(1)}%`;
+                statusText.textContent = `${percent.toFixed(1)}%`;
             } else {
                 statusText.textContent = "Downloading...";
             }
@@ -366,7 +365,9 @@ document.getElementById("downloadSong").addEventListener("click", () => {
         // On complete
         xhr.onload = function () {
             if (xhr.status === 200) {
-                statusText.textContent = "Download finished!";
+                statusText.textContent = "Done";
+                progressBar.value = 100;
+
                 const blob = xhr.response;
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
@@ -376,6 +377,12 @@ document.getElementById("downloadSong").addEventListener("click", () => {
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
+
+                // ✅ Auto-hide after 3 seconds
+                setTimeout(() => {
+                    statusBox.style.display = "none";
+                }, 1000);
+
             } else {
                 statusText.textContent = "Download failed!";
                 alert("Failed to download. Server error.");
@@ -393,6 +400,7 @@ document.getElementById("downloadSong").addEventListener("click", () => {
         alert("No song is currently selected for download!");
     }
 });
+
 
 
 
