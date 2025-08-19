@@ -80,7 +80,8 @@ nav ul li a.active {
 }
 
 .brand img {
-	width: 40px;
+	width: 50px;
+	border-radius: 50%;
 }
 
 
