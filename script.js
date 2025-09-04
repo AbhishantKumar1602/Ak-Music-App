@@ -529,7 +529,7 @@ async function searchSongsOnline(query) {
         
         // First, get the first page to check total available
         const firstRes = await fetch(
-            `https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=${limit}`
+            `https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=${maxPages}&limit=${limit}`
         );
         
         if (!firstRes.ok) {
