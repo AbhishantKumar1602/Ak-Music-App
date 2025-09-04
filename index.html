@@ -1,177 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-      <title>AK Tunes - Free Music Downloads | Royalty-Free MP3 Songs</title>
-      <meta name="google-site-verification" content="M2llp5mfLoNBGkDFzz39KJw2qM9KRTFrqyQ6imY-xg8" />
-      <meta name="author" content="AK Tunes">
-      <meta name="description" content="AK Tunes - Download free royalty-free music, no copyright MP3 songs, and background music for YouTube videos, projects, and content creation. Free music downloads available now.">
-      <meta name="keywords" content="AK Tunes, no copyright music, royalty free songs, free music download, free music, royalty free music, music download, AK Tunes, free mp3, free music download, royalty free music, no copyright music, free MP3 songs, background music, YouTube music, content creator music, AK Tunes">
-      <meta name="robots" content="index, follow">
-      <link rel="canonical" href="https://aktunes.netlify.app/about.html">
-      <meta property="og:title" content="AK Tunes - Free Music for Everyone">
-      <meta property="og:description" content="Download royalty-free music with no copyright claim.">
-      <meta property="og:url" content="https://aktunes.netlify.app/">
-      <meta property="og:type" content="website">
-      <meta property="og:image" content="https://aktunes.netlify.app/logo.png">
-      <link rel="stylesheet" href="style.css" />
-      <link rel="icon" type="image/x-icon" href="favicon.ico">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-      <script type="application/ld+json">
-          {
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AK Tunes - Free Music Downloads | Royalty-Free MP3 Songs</title>
+    <meta name="google-site-verification" content="M2llp5mfLoNBGkDFzz39KJw2qM9KRTFrqyQ6imY-xg8" />
+    <meta name="author" content="AK Tunes">
+    <meta name="description" content="AK Tunes - Download free royalty-free music, no copyright MP3 songs, and background music for YouTube videos, projects, and content creation. Free music downloads available now.">
+    <meta name="keywords" content="AK Tunes, no copyright music, royalty free songs, free music download, free music, royalty free music, music download, AK Tunes, free mp3, free music download, royalty free music, no copyright music, free MP3 songs, background music, YouTube music, content creator music, AK Tunes">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://aktunes.netlify.app/about.html">
+    <meta property="og:title" content="AK Tunes - Free Music for Everyone">
+    <meta property="og:description" content="Download royalty-free music with no copyright claim.">
+    <meta property="og:url" content="https://aktunes.netlify.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://aktunes.netlify.app/logo.png">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script type="application/ld+json">
+        {
             "@context": "https://schema.org",
             "@type": "WebSite",
             "name": "AK Tunes",
             "url": "https://aktunes.netlify.app",
             "description": "Free royalty-free music downloads for content creators",
             "sameAs": [
-              "https://twitter.com/aktunes",
-              "https://instagram.com/aktunes"
+                "https://twitter.com/aktunes",
+                "https://instagram.com/aktunes"
             ]
-}
-</script>
-    </head>
-    <body>
-      <!-- Background Gradient -->
-      <div class="bg-gradient"></div>
+        }
+    </script>
+</head>
 
-      <!-- Navigation -->
-      <nav>
-          <ul>
-              <li>
-                  <a href="index.html" class="brand">
-                      <img src="ak.png" alt="AK Music App Logo" onerror="this.src=`https://via.placeholder.com/40x40/6366f1/ffffff?text=AK`" />
-                      <span>AK Tunes</span>
-                  </a>
-              </li>
-              <li><a href="index.html" class="active">Home</a></li>
-              <li><a href="about.html">About</a></li>
-              <li><a href="contact.html">Contact</a></li>
-          </ul>
-      </nav>
-    
-      <!-- Search Bar -->
-      <div class="search-container">
-          <div class="search-bar">
-              <i class="fas fa-search search-icon"></i>
-              <input type="text" id="searchInput" placeholder="Search for songs, artists, or albums..." />
-              <div class="search-suggestions" id="searchSuggestions"></div>
-          </div>
-      </div>
-      
-      <!-- Song List -->
-      <div class="container">
-          <div class="songList">
-              <div class="section-header">
-                  <h1>Best of AK Songs</h1>
-                  <div class="view-toggle">
-                      <button class="view-btn active" data-view="grid">
-                          <i class="fas fa-th-large"></i>
-                      </button>
-                      <button class="view-btn" data-view="list">
-                          <i class="fas fa-list"></i>
-                      </button>
-                  </div>
-              </div>
-              <div class="songItemContainer grid-view" id="songList">
-                  <!-- Songs will be loaded dynamically -->
-                  <div class="loading-skeleton">
-                      <div class="skeleton-item"></div>
-                      <div class="skeleton-item"></div>
-                      <div class="skeleton-item"></div>
-                      <div class="skeleton-item"></div>
-                  </div>
-              </div>
-          </div>
-      </div>
-      
-      <!-- Bottom Player -->
-      <div class="bottom">
-          <!-- Progress Bar -->
-          <div class="progress-container ">
-              <input type="range" id="myProgressBar" value="0" min="0" max="100" step="0.01" />
-              <div class="progress-glow"></div>
-          </div>
-          
-          <!-- Time Display -->
-          <div class="time-display">
-              <span id="currentTime">0:00</span>
-              <span class="time-separator">•</span>
-              <span id="totalTime">0:00</span>
-          </div>
-          
-          <!-- Main Player Row -->
-          <div class="bottom-row">
-              <!-- Song Info (Left) -->
-              <div class="songInfo" id="songInfo">
-                  <div class="song-artwork">
-                      <img src="playing.gif" width="50px" id="playingGif" style="opacity: 0" />
-                  </div>
-                  <div class="song-details">
-                      <span id="currentSongName">Select a song to play</span>
-                      <span class="song-artist">AK Tunes</span>
-                  </div>
-                  <button class="like-btn" id="likeSong" title="Add to favorites">
-                      <i class="far fa-heart"></i>
-                  </button>
-              </div>
-              
-              <!-- Controls (Center) -->
-              <div class="controls">
-                  <button class="control-btn" id="shuffle" title="Shuffle">
-                      <i class="fas fa-random"></i>
-                  </button>
-                  <button class="control-btn" id="previous" title="Previous">
-                      <i class="fas fa-step-backward"></i>
-                  </button>
-                  <button id="masterPlay" title="Play/Pause">
-                      <i class="far fa-play-circle"></i>
-                  </button>
-                  <button class="control-btn" id="next" title="Next">
-                      <i class="fas fa-step-forward"></i>
-                  </button>
-                  <button class="control-btn" id="repeat" title="Repeat">
-                      <i class="fas fa-redo"></i>
-                  </button>
-              </div>
-              
-              <!-- Additional Controls (Right) -->
-              <div class="additional-controls">
-                  <button class="control-btn" id="queue" title="Queue">
-                      <i class="fas fa-list-music"></i>
-                  </button>
-                  <div class="volume-control">
-                      <button class="control-btn" id="volumeBtn" title="Mute/Unmute">
-                          <i class="fas fa-volume-up"></i>
-                      </button>
-                      <input type="range" id="volumeSlider" min="0" max="100" value="100" />
-                  </div>
-                  <button class="control-btn" id="downloadSong" title="Download Current Song">
-                      <i class="fas fa-download"></i>
-                  </button>
-              </div>
-          </div>
-          
-          <!-- Download Status -->
-          <div id="downloadStatus" class="download-status">
-              <div class="download-info">
-                  <span id="statusText">Preparing download...</span>
-                  <span class="download-size" id="downloadSize"></span>
-              </div>
-              <div class="progress-wrapper">
-                  <progress id="downloadProgress" value="0" max="100"></progress>
-                  <span class="progress-text" id="progressText">0%</span>
-              </div>
-          </div>
-      </div>
-      
-      <!-- Loading Overlay -->
-      <div class="loading-overlay" id="loadingOverlay">
-          <div class="loading-spinner"></div>
-          <p>Loading amazing music...</p>
-      </div>
-      
-      <script src="script.js"></script>
-    </body>
+<body>
+    <!-- Background Gradient -->
+    <div class="bg-gradient"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li>
+                <a href="index.html" class="brand">
+                    <img src="ak.png" alt="AK Music App Logo" onerror="this.src=`https://via.placeholder.com/40x40/6366f1/ffffff?text=AK`" />
+                    <span>AK Tunes</span>
+                </a>
+            </li>
+            <div class="nav-links" id="navLinks">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </ul>
+    </nav>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <div class="search-bar">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search for songs, artists, or albums..." />
+            <div class="search-suggestions" id="searchSuggestions"></div>
+        </div>
+    </div>
+
+    <!-- Song List -->
+    <div class="container">
+        <div class="songList">
+            <div class="section-header">
+                <h1>Best of AK Songs</h1>
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="grid" aria-label="Grid view">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="view-btn" data-view="list" aria-label="List view">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="songItemContainer grid-view" id="songList">
+                <!-- Songs will be loaded dynamically -->
+                <div class="loading-skeleton">
+                    <div class="skeleton-item"></div>
+                    <div class="skeleton-item"></div>
+                    <div class="skeleton-item"></div>
+                    <div class="skeleton-item"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Player -->
+    <div class="bottom">
+        <!-- Progress Bar -->
+        <div class="progress-container ">
+            <input type="range" id="myProgressBar" value="0" min="0" max="100" step="0.01" />
+            <div class="progress-glow"></div>
+        </div>
+
+        <!-- Time Display -->
+        <div class="time-display">
+            <span id="currentTime">0:00</span>
+            <span class="time-separator">/</span>
+            <span id="totalTime">0:00</span>
+        </div>
+
+        <!-- Main Player Row -->
+        <div class="bottom-row">
+            <!-- Song Info (Left) -->
+            <div class="songInfo" id="songInfo">
+                <div class="song-artwork">
+                    <img src="playing.gif" width="50px" id="playingGif" style="opacity: 0" />
+                </div>
+                <div class="song-details">
+                    <span id="currentSongName">Select a song to play</span>
+                    <span class="song-artist">AK Tunes</span>
+                </div>
+                <button class="like-btn" id="likeSong" title="Add to favorites" aria-label="Add to favorites">
+                    <i class="far fa-heart"></i>
+                </button>
+            </div>
+
+            <!-- Controls (Center) -->
+            <div class="controls">
+                <button class="control-btn" id="shuffle" title="Shuffle" aria-label="Toggle shuffle">
+                    <i class="fas fa-random"></i>
+                </button>
+                <button class="control-btn" id="previous" title="Previous" aria-label="Previous song">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button id="masterPlay" title="Play/Pause" aria-label="Play or pause">
+                    <i class="far fa-play-circle"></i>
+                </button>
+                <button class="control-btn" id="next" title="Next" aria-label="Next song">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+                <button class="control-btn" id="repeat" title="Repeat" aria-label="Toggle repeat">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+
+            <!-- Additional Controls (Right) -->
+            <div class="additional-controls">
+                <button class="control-btn" id="queue" title="Queue" aria-label="View queue">
+                    <i class="fas fa-list-music"></i>
+                </button>
+                <div class="volume-control">
+                    <button class="control-btn" id="volumeBtn" title="Mute/Unmute" aria-label="Toggle mute">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="100" aria-label="Volume control" />
+                </div>
+                <button class="control-btn" id="downloadSong" title="Download Current Song" aria-label="Download current song">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="control-btn" id="showFavoritesBtn" title="Show Favorites" aria-label="Show favorite songs">
+                    <i class="far fa-heart"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Download Status -->
+        <div id="downloadStatus" class="download-status">
+            <div class="download-info">
+                <span id="statusText">Preparing download...</span>
+                <span class="download-size" id="downloadSize"></span>
+            </div>
+            <div class="progress-wrapper">
+                <progress id="downloadProgress" value="0" max="100"></progress>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>Loading amazing music...</p>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Mobile menu toggle functionality
+        document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+            const navLinks = document.getElementById('navLinks');
+            const icon = this.querySelector('i');
+            
+            navLinks.classList.toggle('active');
+            
+            // Toggle hamburger/close icon
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close mobile menu when clicking outside or on a link
+        document.addEventListener('click', function(e) {
+            const navLinks = document.getElementById('navLinks');
+            const mobileToggle = document.getElementById('mobileMenuToggle');
+            
+            if (!navLinks.contains(e.target) && !mobileToggle.contains(e.target)) {
+                navLinks.classList.remove('active');
+                mobileToggle.querySelector('i').classList.remove('fa-times');
+                mobileToggle.querySelector('i').classList.add('fa-bars');
+            }
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                const navLinks = document.getElementById('navLinks');
+                const mobileToggle = document.getElementById('mobileMenuToggle');
+                
+                navLinks.classList.remove('active');
+                mobileToggle.querySelector('i').classList.remove('fa-times');
+                mobileToggle.querySelector('i').classList.add('fa-bars');
+            });
+        });
+    </script>
+</body>
+
 </html>

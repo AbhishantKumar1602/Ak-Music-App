@@ -1,4 +1,4 @@
-const searchSongQuery = "best hindi songs"; // default search query
+const searchSongQuery = "best hindi songs";
 const searchInput = document.getElementById("searchInput");
 const songList = document.getElementById("songList");
 const masterPlay = document.getElementById("masterPlay");
@@ -8,22 +8,24 @@ const totalTimeDisplay = document.getElementById("totalTime");
 const currentSongName = document.getElementById("currentSongName");
 const playingGif = document.getElementById("playingGif");
 const loadingOverlay = document.getElementById("loadingOverlay");
-
-// New UI elements
+const likeBtn = document.getElementById("likeSong");
 const volumeSlider = document.getElementById("volumeSlider");
 const volumeBtn = document.getElementById("volumeBtn");
 const viewToggleBtns = document.querySelectorAll(".view-btn");
 const songItemContainer = document.getElementById("songList");
 
+
 let audio = new Audio();
 let currentSongIndex = 0;
 let songs = []; // dynamic list
+let lastSearchedSongs = []; // To store the result of the last search
 let isShuffled = false;
 let isRepeating = false;
 let isMuted = false;
+let isFavoritesViewActive = false;
 let previousVolume = 1;
 
-// Local fallback songs
+// Local songs
 const localSongs = [
     { name: "Legions - Mortals", artist: "Mortals", filePath: "songs/1.mp3", coverPath: "covers/1.jpg" },
     { name: "Trap Cartel - Huma-Huma", artist: "Trap Cartel", filePath: "songs/2.mp3", coverPath: "covers/2.jpg" },
@@ -118,7 +120,12 @@ function renderSongs(songArray) {
         songList.appendChild(songItem);
     });
 
-    // Enhanced click handlers
+    addSongItemClickHandlers();
+
+    hideLoading();
+}
+
+function addSongItemClickHandlers() {
     document.querySelectorAll(".songItem").forEach(item => {
         item.addEventListener("click", (e) => {
             if (e.target.closest('.songPlay')) return; // Don't trigger when clicking play button
@@ -126,16 +133,14 @@ function renderSongs(songArray) {
         });
     });
 
-    // Play button handlers
     document.querySelectorAll(".songPlay").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
             playSongByIndex(parseInt(btn.dataset.index));
         });
     });
-
-    hideLoading();
 }
+
 
 // Enhanced play function with better visual feedback
 function playSongByIndex(index) {
@@ -182,9 +187,17 @@ function updateCurrentSongUI(song) {
     
     // Show song artist when song is playing
     const currentArtist = document.getElementById("currentArtist");
-    const likeBtn = document.getElementById("likeSong");
+    // likeBtn = document.getElementById("likeSong");
     if (currentArtist) {
         currentArtist.style.display = "block";
+    }
+
+    // Update like button status for the current song
+    if (likeBtn) {
+        const icon = likeBtn.querySelector('i');
+        likeBtn.classList.toggle('liked', !!song.isLiked);
+        icon.classList.toggle('far', !song.isLiked);
+        icon.classList.toggle('fas', !!song.isLiked);
     }
     if (likeBtn) {
         likeBtn.style.display = "block";
@@ -198,6 +211,128 @@ function updateCurrentSongUI(song) {
         };
     }
 }
+
+/**
+ * Saves the filePaths of liked songs to localStorage.
+ */
+function saveLikedSongs() {
+    const likedSongPaths = songs
+        .filter(song => song.isLiked)
+        .map(song => song.filePath);
+    localStorage.setItem('likedSongs', JSON.stringify(likedSongPaths));
+}
+
+/**
+ * Loads the set of liked song filePaths from localStorage.
+ * @returns {Set<string>} A set of filePaths for liked songs.
+ */
+function loadLikedSongs() {
+    const likedSongPaths = JSON.parse(localStorage.getItem('likedSongs')) || [];
+    return new Set(likedSongPaths);
+}
+
+likeBtn.addEventListener("click", () => {
+    if (songs.length === 0) return;
+    const song = songs[currentSongIndex];
+    song.isLiked = !song.isLiked; // Toggle state
+    updateCurrentSongUI(song); // Update the player UI
+    saveLikedSongs(); // Persist the change
+    showNotification(song.isLiked ? 'Added to favorites' : 'Removed from favorites', song.isLiked ? 'success' : 'info');
+
+    // If we are in favorites view, refresh the list to show the change (add or remove)
+    if (isFavoritesViewActive) {
+        // Use a small delay to allow the user to see the heart icon change before the item disappears/appears
+        setTimeout(() => {
+            renderFavoriteSongs();
+        }, 300);
+    }
+});
+
+
+
+/**
+ * Filters and displays only the songs marked as 'liked'.
+ * To use this, you would add a button to your HTML, for example:
+ * <button id="showFavoritesBtn"><i class="fas fa-heart"></i> Favorites</button>
+ * Then you can uncomment and use the event listener below.
+ */
+function renderFavoriteSongs() {
+    const favoriteSongsExist = songs.some(song => song.isLiked);
+
+    if (!favoriteSongsExist) {
+        songList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-heart-broken" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem;"></i>
+                <h3 style="opacity: 0.7; margin-bottom: 0.5rem;">No favorite songs yet</h3>
+                <p style="opacity: 0.5;">Click the heart icon on a song to add it here.</p>
+            </div>
+        `;
+        return;
+    }
+
+    songList.innerHTML = ""; // Clear the current list
+    let animationIndex = 0; // Separate index for animation delay
+
+    // Iterate over the original 'songs' array to preserve the index
+    songs.forEach((song, index) => {
+        if (song.isLiked) {
+            const displayName = song.name.length > 35 ? song.name.substring(0, 35) + "..." : song.name;
+            const songItem = document.createElement("div");
+            songItem.className = "songItem fade-in";
+            songItem.dataset.index = index; // Use the original index
+            songItem.style.animationDelay = `${animationIndex * 0.1}s`;
+
+            songItem.innerHTML = `
+                <img src="${song.coverPath}" alt="Free royalty-free music download - AK Tunes" onerror="this.src='https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵'" />
+                <div class="song-info">
+                    <div class="song-name">${displayName}</div>
+                    <div class="song-artist">${song.artist}</div>
+                </div>
+                <i class="fas fa-play-circle songPlay" data-index="${index}"></i>
+            `;
+            songList.appendChild(songItem);
+            animationIndex++;
+        }
+    });
+
+    // Re-add click handlers for the newly created items
+    addSongItemClickHandlers();
+
+    // If a song is currently playing and it's a favorite, update its UI
+    if (!audio.paused) {
+        const activeIcon = document.querySelector(`.songPlay[data-index="${currentSongIndex}"]`);
+        if (activeIcon) {
+            activeIcon.classList.remove("fa-play-circle");
+            activeIcon.classList.add("fa-pause-circle");
+        }
+        const currentSongItem = document.querySelector(`.songItem[data-index="${currentSongIndex}"]`);
+        if (currentSongItem) {
+            currentSongItem.classList.add('active');
+        }
+    }
+}
+
+document.getElementById("showFavoritesBtn")?.addEventListener('click', (e) => {
+    const btn = e.currentTarget;
+    const icon = btn.querySelector('i');
+    isFavoritesViewActive = !isFavoritesViewActive; // Toggle state
+
+    if (isFavoritesViewActive) {
+        // Entering favorites view
+        renderFavoriteSongs();
+        showNotification("Showing favorite songs", 'info');
+        btn.classList.add('active');
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+    } else {
+        // Exiting favorites view, restore last list
+        renderSongs(lastSearchedSongs);
+        showNotification("Showing all songs", 'info');
+        btn.classList.remove('active');
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+    }
+});
 
 // Enhanced master play/pause with better state management
 masterPlay.addEventListener("click", () => {
@@ -358,8 +493,21 @@ searchInput.addEventListener("input", (e) => {
     const query = e.target.value.trim();
     
     if (query.length === 0) {
-        songs = localSongs;
+        // Revert to the last full list of songs
+        songs = [...lastSearchedSongs];
         renderSongs(songs);
+
+        // Also reset the favorites button state if it was active
+        if (isFavoritesViewActive) {
+            isFavoritesViewActive = false;
+            const favBtn = document.getElementById("showFavoritesBtn");
+            if (favBtn) {
+                favBtn.classList.remove('active');
+                const icon = favBtn.querySelector('i');
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+            }
+        }
         return;
     }
     
@@ -451,32 +599,41 @@ async function searchSongsOnline(query) {
             }
         });
         
+        // Apply liked status from localStorage
+        const likedSongsSet = loadLikedSongs();
+        allSongs.forEach(song => {
+            if (likedSongsSet.has(song.filePath)) {
+                song.isLiked = true;
+            }
+        });
+
         if (allSongs.length === 0) {
             throw new Error("No playable songs found");
         }
         
-        // Remove duplicates based on song name AND artist
-        const uniqueSongs = allSongs.filter((song, index, self) => 
-            index === self.findIndex(s => 
-                s.name.toLowerCase() === song.name.toLowerCase() && 
-                s.artist.toLowerCase() === song.artist.toLowerCase()
-            )
-        );
-        
-        // Shuffle results for variety
-        // const shuffledSongs = uniqueSongs.sort(() => Math.random() - 0.5);
         const shuffledSongs = allSongs.sort(() => Math.random() - 0.5);
         
         
         // Limit to 300 songs max for better performance
         songs = shuffledSongs.slice(0, 300);
+        lastSearchedSongs = [...songs]; // Store a copy of the search results
         
         renderSongs(songs);
-        showNotification(`Loaded ${songs.length} unique songs from ${totalPages} pages!`, 'success');
+
+        // Reset favorites view if a new search is successful
+        isFavoritesViewActive = false;
+        const favBtn = document.getElementById("showFavoritesBtn");
+        if (favBtn) {
+            favBtn.classList.remove('active');
+            const icon = favBtn.querySelector('i');
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+        }
 
     } catch (err) {
         console.warn("API failed, using fallback songs.", err);
         songs = localSongs;
+        lastSearchedSongs = [...localSongs];
         renderSongs(songs);
         showNotification('Using offline songs', 'warning');
         hideLoading();
@@ -669,6 +826,21 @@ document.getElementById("downloadSong").addEventListener("click", () => {
 // Initialize app
 (function init() {
     showLoading();
+    // Start with local songs to provide an immediate list while waiting for the API.
+
+    // Load liked songs from storage and apply to local fallback list
+    const likedSongsSet = loadLikedSongs();
+    localSongs.forEach(song => {
+        if (likedSongsSet.has(song.filePath)) {
+            song.isLiked = true;
+        }
+    });
+
+    songs = localSongs;
+    lastSearchedSongs = [...localSongs];
+    renderSongs(songs);
+
+    // Then, fetch the initial list of songs from the API
     searchSongsOnline(searchSongQuery);
     
     // Set initial volume
@@ -699,6 +871,29 @@ document.getElementById("downloadSong").addEventListener("click", () => {
             background: var(--bg-card-hover) !important;
             border-color: var(--primary-color) !important;
             box-shadow: var(--shadow-glow) !important;
+        }
+
+        /* --- Loading Overlay Fix --- */
+        #loadingOverlay {
+            position: fixed;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: rgba(15, 15, 35, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 1000 !important;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        #loadingOverlay.show {
+            opacity: 1;
+            visibility: visible;
         }
     `;
     document.head.appendChild(style);
