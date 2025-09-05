@@ -103,7 +103,7 @@ function renderSongs(songArray) {
 
     songList.innerHTML = "";
     songArray.forEach((song, index) => {
-        const displayName = song.name.length > 25 ? song.name.substring(0, 25) + "..." : song.name;
+        const songNameHTML = song.name.length > 25 ? `<marquee direction="left" scrollamount="3">${song.name}</marquee>` : song.name;
         const songItem = document.createElement("div");
         songItem.className = "songItem fade-in";
         songItem.dataset.index = index;
@@ -112,7 +112,7 @@ function renderSongs(songArray) {
         songItem.innerHTML = `
             <img src="${song.coverPath}" alt="Free royalty-free music download - AK Tunes" onerror="this.src='https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵'" />
             <div class="song-info">
-                <div class="song-name">${displayName}</div>
+                <div class="song-name">${songNameHTML}</div>
                 <div class="song-artist">${song.artist}</div>
             </div>
             <i class="fas fa-play-circle songPlay" data-index="${index}"></i>
@@ -494,7 +494,7 @@ searchInput.addEventListener("input", (e) => {
     
     if (query.length === 0) {
         // Revert to the last full list of songs
-        songs = [...lastSearchedSongs];
+        searchSongsOnline("best hindi songs")
         renderSongs(songs);
 
         // Also reset the favorites button state if it was active
@@ -529,7 +529,7 @@ async function searchSongsOnline(query) {
         
         // First, get the first page to check total available
         const firstRes = await fetch(
-            `https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=${maxPages}&limit=${limit}`
+            `https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=${limit}`
         );
         
         if (!firstRes.ok) {
