@@ -103,7 +103,7 @@ function renderSongs(songArray) {
 
     songList.innerHTML = "";
     songArray.forEach((song, index) => {
-        const displayName = song.name.length > 35 ? song.name.substring(0, 35) + "..." : song.name;
+        const displayName = song.name.length > 25 ? song.name.substring(0, 25) + "..." : song.name;
         const songItem = document.createElement("div");
         songItem.className = "songItem fade-in";
         songItem.dataset.index = index;
