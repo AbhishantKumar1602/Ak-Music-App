@@ -183,7 +183,9 @@ function playSongByIndex(index) {
 }
 
 function updateCurrentSongUI(song) {
-    currentSongName.innerText = song.name;
+    // currentSongName.innerText = song.name;
+    currentSongName.innerHTML = song.name;
+
     
     // Show song artist when song is playing
     const currentArtist = document.getElementById("currentArtist");
@@ -276,7 +278,8 @@ function renderFavoriteSongs() {
     // Iterate over the original 'songs' array to preserve the index
     songs.forEach((song, index) => {
         if (song.isLiked) {
-            const displayName = song.name.length > 35 ? song.name.substring(0, 35) + "..." : song.name;
+            // const displayName = song.name.length > 35 ? song.name.substring(0, 35) + "..." : song.name;
+            const displayName = song.name
             const songItem = document.createElement("div");
             songItem.className = "songItem fade-in";
             songItem.dataset.index = index; // Use the original index
