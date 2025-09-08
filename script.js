@@ -512,10 +512,10 @@ searchInput.addEventListener("input", (e) => {
     }
     
     if (query.length > 2) {
-        showLoading();
         searchTimeout = setTimeout(() => {
+            showLoading();
             searchSongsOnline(query);
-        }, 500);
+        }, 2000);
     }
 });
 
