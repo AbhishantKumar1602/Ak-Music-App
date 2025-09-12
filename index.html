@@ -137,7 +137,27 @@
 
       function loadPage(page, push = true) {
         const loadingOverlay = document.getElementById("loadingOverlay");
-        if (loadingOverlay) loadingOverlay.classList.add("show");
+        const loadingText = loadingOverlay?.querySelector("p");
+        
+        if (loadingOverlay) {
+          // Update loading message based on page
+          if (loadingText) {
+            switch(page) {
+              case 'home.html':
+                loadingText.textContent = "Loading amazing music for you ...";
+                break;
+              case 'about.html':
+                loadingText.textContent = "Loading about Us...";
+                break;
+              case 'contact.html':
+                loadingText.textContent = "Loading contact Us...";
+                break;
+              default:
+                loadingText.textContent = "Loading...";
+            }
+          }
+          loadingOverlay.classList.add("show");
+        }
 
         fetch("pages/" + page)
           .then(res => res.text())
