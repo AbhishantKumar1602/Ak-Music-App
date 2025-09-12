@@ -1,18 +1,13 @@
 const searchSongQuery = "best hindi songs";
-const searchInput = document.getElementById("searchInput");
-const songList = document.getElementById("songList");
 const masterPlay = document.getElementById("masterPlay");
 const myProgressBar = document.getElementById("myProgressBar");
 const currentTimeDisplay = document.getElementById("currentTime");
 const totalTimeDisplay = document.getElementById("totalTime");
 const currentSongName = document.getElementById("currentSongName");
 const playingGif = document.getElementById("playingGif");
-const loadingOverlay = document.getElementById("loadingOverlay");
 const likeBtn = document.getElementById("likeSong");
 const volumeSlider = document.getElementById("volumeSlider");
 const volumeBtn = document.getElementById("volumeBtn");
-const viewToggleBtns = document.querySelectorAll(".view-btn");
-const songItemContainer = document.getElementById("songList");
 
 
 let audio = new Audio();
@@ -48,34 +43,43 @@ function formatTime(sec) {
 }
 
 function showLoading() {
-    loadingOverlay.classList.add('show');
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    if (loadingOverlay){
+        loadingOverlay.classList.add('show');
+    }
 }
 
 function hideLoading() {
-    loadingOverlay.classList.remove('show');
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    if (loadingOverlay){
+        loadingOverlay.classList.remove('show');
+    }
 }
 
 function showNotification(message, type = 'info') {
-    // Create a simple notification system
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
-    notification.textContent = message;
+    notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
     notification.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background: var(--bg-secondary);
-        color: var(--text-primary);
+        background: ${type === 'success' ? 'var(--success-color)' : type === 'error' ? 'var(--error-color)' : 'var(--primary-color)'};
+        color: white;
         padding: 1rem 1.5rem;
         border-radius: var(--border-radius-md);
         border: 1px solid var(--border-color);
         z-index: 1001;
-        animation: slideIn 0.3s ease;
+        animation: slideInRight 0.3s ease;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     `;
     document.body.appendChild(notification);
     
     setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
+        notification.style.animation = 'slideOutRight 0.3s ease forwards';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
@@ -90,6 +94,11 @@ function resetSongItemIcons() {
 
 // Enhanced song rendering with improved UI
 function renderSongs(songArray) {
+    const songList = document.getElementById("songList");
+    if (!songList) {
+        console.error("Song list container not found! Cannot render songs.");
+        return;
+    }
     if (songArray.length === 0) {
         songList.innerHTML = `
             <div class="empty-state">
@@ -100,9 +109,8 @@ function renderSongs(songArray) {
         `;
         return;
     }
-
     songList.innerHTML = "";
-    songArray.forEach((song, index) => {
+        songArray.forEach((song, index) => {
         const songNameHTML = song.name.length > 25 ? `<marquee direction="left" scrollamount="3">${song.name}</marquee>` : song.name;
         const songItem = document.createElement("div");
         songItem.className = "songItem fade-in";
@@ -184,7 +192,7 @@ function playSongByIndex(index) {
 
 function updateCurrentSongUI(song) {
     // currentSongName.innerText = song.name;
-    currentSongName.innerHTML = song.name;
+    currentSongName.innerHTML = song.name || "Unknown Song";
 
     
     // Show song artist when song is playing
@@ -197,11 +205,11 @@ function updateCurrentSongUI(song) {
     // Update like button status for the current song
     if (likeBtn) {
         const icon = likeBtn.querySelector('i');
-        likeBtn.classList.toggle('liked', !!song.isLiked);
-        icon.classList.toggle('far', !song.isLiked);
-        icon.classList.toggle('fas', !!song.isLiked);
-    }
-    if (likeBtn) {
+        if (icon) {
+            likeBtn.classList.toggle('liked', !!song.isLiked);
+            icon.classList.toggle('far', !song.isLiked);
+            icon.classList.toggle('fas', !!song.isLiked);
+        }
         likeBtn.style.display = "block";
     }
     
@@ -233,22 +241,24 @@ function loadLikedSongs() {
     return new Set(likedSongPaths);
 }
 
-likeBtn.addEventListener("click", () => {
-    if (songs.length === 0) return;
-    const song = songs[currentSongIndex];
-    song.isLiked = !song.isLiked; // Toggle state
-    updateCurrentSongUI(song); // Update the player UI
-    saveLikedSongs(); // Persist the change
-    showNotification(song.isLiked ? 'Added to favorites' : 'Removed from favorites', song.isLiked ? 'success' : 'info');
+if (likeBtn) {
+    likeBtn.addEventListener("click", () => {
+        if (songs.length === 0) return;
+        const song = songs[currentSongIndex];
+        song.isLiked = !song.isLiked; // Toggle state
+        updateCurrentSongUI(song); // Update the player UI
+        saveLikedSongs(); // Persist the change
+        showNotification(song.isLiked ? 'Added to favorites' : 'Removed from favorites', song.isLiked ? 'success' : 'info');
 
-    // If we are in favorites view, refresh the list to show the change (add or remove)
-    if (isFavoritesViewActive) {
-        // Use a small delay to allow the user to see the heart icon change before the item disappears/appears
-        setTimeout(() => {
-            renderFavoriteSongs();
-        }, 300);
-    }
-});
+        // If we are in favorites view, refresh the list to show the change (add or remove)
+        if (isFavoritesViewActive) {
+            // Use a small delay to allow the user to see the heart icon change before the item disappears/appears
+            setTimeout(() => {
+                renderFavoriteSongs();
+            }, 300);
+        }
+    });
+}
 
 
 
@@ -259,6 +269,11 @@ likeBtn.addEventListener("click", () => {
  * Then you can uncomment and use the event listener below.
  */
 function renderFavoriteSongs() {
+    const songList = document.getElementById("songList");
+    if (!songList) {
+        console.error("Song list container not found for favorites!");
+        return;
+    }
     const favoriteSongsExist = songs.some(song => song.isLiked);
 
     if (!favoriteSongsExist) {
@@ -391,18 +406,12 @@ audio.addEventListener("play", () => {
 
 // Enhanced progress bar with smooth updates
 audio.addEventListener("timeupdate", () => {
-    if (!isNaN(audio.duration)) {
+    if (myProgressBar && !isNaN(audio.duration)) {
         const progress = (audio.currentTime / audio.duration) * 100;
         myProgressBar.value = progress;
 
         // Update gradient background
-        myProgressBar.style.background = `linear-gradient(
-            to right,
-            var(--primary-color) 0%,
-            var(--primary-color) ${progress}%,
-            transparent ${progress}%,
-            transparent 100%
-        )`;
+        myProgressBar.style.background = `linear-gradient(to right, var(--primary-color) ${progress}%, var(--bg-card) ${progress}%)`;
 
         currentTimeDisplay.textContent = formatTime(audio.currentTime);
         totalTimeDisplay.textContent = formatTime(audio.duration);
@@ -447,80 +456,6 @@ function updateVolumeIcon(volume) {
         volumeIcon.className = 'fas fa-volume-up';
     }
 }
-
-// View toggle functionality
-viewToggleBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const view = btn.dataset.view;
-        
-        // Update button states
-        viewToggleBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        // Update container class
-        songItemContainer.className = `songItemContainer ${view}-view`;
-        
-        // Re-render songs with new layout
-        renderSongs(songs);
-    });
-});
-
-// Shuffle functionality
-document.getElementById("shuffle").addEventListener("click", (e) => {
-    isShuffled = !isShuffled;
-    e.target.classList.toggle('active', isShuffled);
-    
-    if (isShuffled) {
-        showNotification('Shuffle enabled', 'info');
-    } else {
-        showNotification('Shuffle disabled', 'info');
-    }
-});
-
-// Repeat functionality
-document.getElementById("repeat").addEventListener("click", (e) => {
-    isRepeating = !isRepeating;
-    e.target.classList.toggle('active', isRepeating);
-    
-    if (isRepeating) {
-        showNotification('Repeat enabled', 'info');
-    } else {
-        showNotification('Repeat disabled', 'info');
-    }
-});
-
-// Enhanced search with debouncing
-let searchTimeout;
-searchInput.addEventListener("input", (e) => {
-    clearTimeout(searchTimeout);
-    const query = e.target.value.trim();
-    
-    if (query.length === 0) {
-        // Revert to the last full list of songs
-        searchSongsOnline("best hindi songs")
-        renderSongs(songs);
-
-        // Also reset the favorites button state if it was active
-        if (isFavoritesViewActive) {
-            isFavoritesViewActive = false;
-            const favBtn = document.getElementById("showFavoritesBtn");
-            if (favBtn) {
-                favBtn.classList.remove('active');
-                const icon = favBtn.querySelector('i');
-                icon.classList.remove('fas');
-                icon.classList.add('far');
-            }
-        }
-        return;
-    }
-    
-    if (query.length > 2) {
-        searchTimeout = setTimeout(() => {
-            showLoading();
-            searchSongsOnline(query);
-        }, 2000);
-    }
-});
 
 // Enhanced API search with multiple pages for more songs
 async function searchSongsOnline(query) {
@@ -827,8 +762,8 @@ document.getElementById("downloadSong").addEventListener("click", () => {
 });
 
 // Initialize app
-(function init() {
-    showLoading();
+function initApp() {
+    // This function initializes components that are ALWAYS on the page.
     // Start with local songs to provide an immediate list while waiting for the API.
 
     // Load liked songs from storage and apply to local fallback list
@@ -841,23 +776,18 @@ document.getElementById("downloadSong").addEventListener("click", () => {
 
     songs = localSongs;
     lastSearchedSongs = [...localSongs];
-    renderSongs(songs);
-
-    // Then, fetch the initial list of songs from the API
-    searchSongsOnline(searchSongQuery);
     
     // Set initial volume
     audio.volume = 1;
     volumeSlider.value = 100;
-    
     // Add some CSS animations for notifications
     const style = document.createElement('style');
     style.textContent = `
-        @keyframes slideIn {
+        @keyframes slideInRight {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-        @keyframes slideOut {
+        @keyframes slideOutRight {
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
         }
@@ -899,5 +829,193 @@ document.getElementById("downloadSong").addEventListener("click", () => {
             visibility: visible;
         }
     `;
+
+    // Player controls that are always present
+    const shufflebtn = document.getElementById("shuffle");
+    if (shufflebtn) {
+        shufflebtn.addEventListener("click", (e) => {
+            isShuffled = !isShuffled;
+            e.currentTarget.classList.toggle('active', isShuffled);
+            showNotification(isShuffled ? 'Shuffle enabled' : 'Shuffle disabled', 'info');
+        });
+    }
+
+    const repeatbtn = document.getElementById("repeat");
+    if (repeatbtn) {
+        repeatbtn.addEventListener("click", (e) => {
+            isRepeating = !isRepeating;
+            e.currentTarget.classList.toggle('active', isRepeating);
+            showNotification(isRepeating ? 'Repeat enabled' : 'Repeat disabled', 'info');
+        });
+    }
+
     document.head.appendChild(style);
-})();
+}
+
+function initHomePage() {
+    const searchInput = document.getElementById("searchInput");
+    const viewToggleBtns = document.querySelectorAll(".view-btn");
+    const songItemContainer = document.getElementById("songList");
+
+    // View toggle functionality
+    if (viewToggleBtns.length > 0 && songItemContainer) {
+        viewToggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const view = btn.dataset.view;
+                
+                viewToggleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                songItemContainer.className = `songItemContainer ${view}-view`;
+                
+                // Determine which list to re-render
+                const currentList = isFavoritesViewActive ? songs.filter(s => s.isLiked) : lastSearchedSongs;
+                renderSongs(currentList);
+            });
+        });
+    }
+
+    // Search with debouncing
+    let searchTimeout;
+    if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            if (query.length === 0) {
+                renderSongs(lastSearchedSongs);
+                return;
+            }
+            
+            if (query.length > 2) {
+                searchTimeout = setTimeout(() => {
+                    showLoading();
+                    searchSongsOnline(query);
+                }, 2000);
+            }
+        });
+    }
+
+    // Initial song fetch for home page
+    // Check if we only have the local fallback songs
+    if (songs.length <= localSongs.length) {
+        searchSongsOnline(searchSongQuery);
+    } else {
+        // If we already have a list from a previous search, just render it
+        renderSongs(songs);
+    }
+}
+
+function initContactPage() {
+    hideLoading();
+    
+    // Initialize EmailJS (do this globally to ensure it's available)
+    if (typeof emailjs !== 'undefined') {
+        emailjs.init("nmRcMh7mTaf_ZBOve");
+    } else {
+        console.error('EmailJS library not loaded');
+        return;
+    }
+    
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        // Remove any existing event listeners to prevent duplicates
+        const newForm = contactForm.cloneNode(true);
+        contactForm.parentNode.replaceChild(newForm, contactForm);
+        
+        // Add the event listener to the new form
+        newForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('Form submitted via EmailJS handler'); // Debug log
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Hide previous messages
+            if (successMessage) successMessage.style.display = 'none';
+            if (errorMessage) errorMessage.style.display = 'none';
+            
+            // Update button state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            submitBtn.disabled = true;
+            
+            // Get form data
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value || 'Contact Form Submission',
+                message: document.getElementById('message').value,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            console.log('Sending email with data:', formData); // Debug log
+            
+            // Send email to admin
+            emailjs.send("service_3fsrn7p", "template_admin", {
+                from_name: formData.name,
+                from_email: formData.email,
+                subject: formData.subject,
+                message: formData.message,
+                timestamp: formData.timestamp,
+                to_email: "official.abhishant.kumar@gmail.com"
+            })
+            .then(() => {
+                console.log('Admin email sent successfully'); // Debug log
+                // Send auto-reply to user
+                return emailjs.send("service_3fsrn7p", "template_auto_reply", {
+                    to_name: formData.name,
+                    to_email: formData.email,
+                    subject: "Thank you for contacting AK Music App",
+                    message: formData.message
+                });
+            })
+            .then(() => {
+                console.log('Auto-reply sent successfully'); // Debug log
+                // Success - both emails sent
+                if (successMessage) successMessage.style.display = 'block';
+                showNotification('Message sent successfully! Check your email for confirmation.', 'success');
+                newForm.reset();
+            })
+            .catch((error) => {
+                // Error handling
+                console.error('EmailJS Error:', error);
+                if (errorMessage) errorMessage.style.display = 'block';
+                showNotification('Failed to send message. Please try again or contact us directly.', 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+                submitBtn.disabled = false;
+            });
+        });
+        
+        console.log('Contact form handler attached successfully'); // Debug log
+    } else {
+        console.error('Contact form not found');
+    }
+}
+
+function initAboutPage() {
+    hideLoading();
+    // No specific JS for about page yet, just hide the loader
+}
+
+/**
+ * This is the main router function called from index.html
+ * after a page's content has been loaded into the DOM.
+ */
+function initPage(page) {
+    if (page === 'home.html') {
+        initHomePage();
+    } else if (page === 'contact.html') {
+        initContactPage();
+    } else if (page === 'about.html') {
+        initAboutPage();
+    }
+}
+
+// Initialize the application's global components
+initApp();
