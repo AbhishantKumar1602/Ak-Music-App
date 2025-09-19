@@ -209,6 +209,49 @@ nav a.active::after {
     color: var(--text-muted);
 }
 
+/* Search Suggestions */
+.search-suggestions {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    z-index: 10;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none; /* Initially hidden */
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(20px);
+}
+
+.search-suggestions.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+.suggestion-item {
+    padding: 0.75rem 1rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+}
+
 /* Container */
 .container {
     padding: 0 1rem 10rem 1rem;

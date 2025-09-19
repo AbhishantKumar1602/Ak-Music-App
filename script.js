@@ -15,6 +15,7 @@ let currentSongIndex = 0;
 let songs = []; // dynamic list
 let lastSearchedSongs = []; // To store the result of the last search
 let isShuffled = false;
+let suggestionTimeout;
 let isRepeating = false;
 let isMuted = false;
 let isFavoritesViewActive = false;
@@ -852,6 +853,70 @@ function initApp() {
     document.head.appendChild(style);
 }
 
+async function fetchAndShowSuggestions(query) {
+    const suggestionsContainer = document.getElementById("searchSuggestions");
+    if (!suggestionsContainer) return;
+
+    if (query.length < 2) {
+        suggestionsContainer.innerHTML = '';
+        suggestionsContainer.classList.remove('active');
+        return;
+    }
+
+    try {
+        const res = await fetch(`https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=5`);
+        if (!res.ok) throw new Error('Suggestion API failed');
+        
+        const data = await res.json();
+
+        if (data.success && data.data.results?.length > 0) {
+            suggestionsContainer.innerHTML = '';
+            const suggestionNames = new Set();
+
+            data.data.results.forEach(song => {
+                // Decode HTML entities (like &quot;) before cleaning the name
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = song.name;
+                const decodedName = tempDiv.textContent || tempDiv.innerText;
+                const cleanName = decodedName.replace(/ \(From ".*"\)/i, '').trim();
+
+                if (suggestionNames.has(cleanName)) return;
+                
+                suggestionNames.add(cleanName);
+
+                const suggestionItem = document.createElement('div');
+                suggestionItem.className = 'suggestion-item';
+                suggestionItem.textContent = cleanName;
+                suggestionItem.title = cleanName; // Show full name on hover
+                suggestionItem.addEventListener('click', () => {
+                    const searchInput = document.getElementById("searchInput");
+                    searchInput.value = cleanName;
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.classList.remove('active');
+                    showLoading();
+                    searchSongsOnline(cleanName);
+                });
+                suggestionsContainer.appendChild(suggestionItem);
+            });
+
+            if (suggestionsContainer.hasChildNodes()) {
+                suggestionsContainer.classList.add('active');
+            } else {
+                suggestionsContainer.classList.remove('active');
+            }
+        } else {
+            suggestionsContainer.innerHTML = '';
+            suggestionsContainer.classList.remove('active');
+        }
+    } catch (error) {
+        console.warn('Could not fetch search suggestions:', error);
+        if (suggestionsContainer) {
+            suggestionsContainer.innerHTML = '';
+            suggestionsContainer.classList.remove('active');
+        }
+    }
+}
+
 function initHomePage() {
     const searchInput = document.getElementById("searchInput");
     const viewToggleBtns = document.querySelectorAll(".view-btn");
@@ -868,30 +933,72 @@ function initHomePage() {
                 
                 songItemContainer.className = `songItemContainer ${view}-view`;
                 
-                // Determine which list to re-render
-                const currentList = isFavoritesViewActive ? songs.filter(s => s.isLiked) : lastSearchedSongs;
-                renderSongs(currentList);
+                // Re-render with the correct function to preserve indices
+                if (isFavoritesViewActive) {
+                    renderFavoriteSongs();
+                } else {
+                    renderSongs(lastSearchedSongs);
+                }
             });
         });
     }
 
-    // Search with debouncing
-    let searchTimeout;
+    // Search with suggestions and debouncing
     if (searchInput) {
+        const suggestionsContainer = document.getElementById("searchSuggestions");
+
         searchInput.addEventListener("input", (e) => {
-            clearTimeout(searchTimeout);
+            clearTimeout(suggestionTimeout);
             const query = e.target.value.trim();
             
             if (query.length === 0) {
-                renderSongs(lastSearchedSongs);
+                if (suggestionsContainer) {
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.classList.remove('active');
+                }
+                // When input is cleared, restore the correct view
+                if (isFavoritesViewActive) {
+                    renderFavoriteSongs();
+                } else {
+                    renderSongs(lastSearchedSongs);
+                }
                 return;
             }
             
-            if (query.length > 2) {
-                searchTimeout = setTimeout(() => {
+            if (query.length > 1) {
+                suggestionTimeout = setTimeout(() => {
+                    fetchAndShowSuggestions(query);
+                }, 300); // Debounce for 300ms
+            } else {
+                 if (suggestionsContainer) {
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.classList.remove('active');
+                }
+            }
+        });
+
+        // Handle search on Enter key
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                clearTimeout(suggestionTimeout);
+                if (suggestionsContainer) {
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.classList.remove('active');
+                }
+                const query = searchInput.value.trim();
+                if (query) {
                     showLoading();
                     searchSongsOnline(query);
-                }, 2000);
+                }
+            }
+        });
+
+        // Hide suggestions when clicking outside the search bar
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-bar') && suggestionsContainer) {
+                suggestionsContainer.innerHTML = '';
+                suggestionsContainer.classList.remove('active');
             }
         });
     }
