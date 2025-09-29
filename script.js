@@ -853,6 +853,61 @@ function initApp() {
     document.head.appendChild(style);
 }
 
+const MAX_HISTORY_ITEMS = 10;
+
+function getSearchHistory() {
+    return JSON.parse(localStorage.getItem('searchHistory')) || [];
+}
+
+function saveSearchHistory(history) {
+    localStorage.setItem('searchHistory', JSON.stringify(history));
+}
+
+function addToSearchHistory(query) {
+    if (!query) return;
+    let history = getSearchHistory();
+    const lowerCaseQuery = query.toLowerCase();
+    // Remove existing entry to move it to the top
+    history = history.filter(item => item.toLowerCase() !== lowerCaseQuery);
+    // Add new query to the beginning
+    history.unshift(query);
+    // Limit history size
+    if (history.length > MAX_HISTORY_ITEMS) {
+        history.pop();
+    }
+    saveSearchHistory(history);
+}
+
+function showSearchHistory() {
+    const suggestionsContainer = document.getElementById("searchSuggestions");
+    if (!suggestionsContainer) return;
+
+    const history = getSearchHistory();
+    suggestionsContainer.innerHTML = '';
+
+    if (history.length > 0) {
+        history.forEach(query => {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'suggestion-item history-item';
+            historyItem.innerHTML = `
+                <i class="fas fa-history"></i>
+                <span>${query}</span>
+            `;
+            historyItem.addEventListener('click', () => {
+                const searchInput = document.getElementById("searchInput");
+                searchInput.value = query;
+                suggestionsContainer.classList.remove('active');
+                showLoading();
+                searchSongsOnline(query);
+            });
+            suggestionsContainer.appendChild(historyItem);
+        });
+        suggestionsContainer.classList.add('active');
+    } else {
+        suggestionsContainer.classList.remove('active');
+    }
+}
+
 async function fetchAndShowSuggestions(query) {
     const suggestionsContainer = document.getElementById("searchSuggestions");
     if (!suggestionsContainer) return;
@@ -860,11 +915,12 @@ async function fetchAndShowSuggestions(query) {
     if (query.length < 2) {
         suggestionsContainer.innerHTML = '';
         suggestionsContainer.classList.remove('active');
+        showSearchHistory(); // Show history if input is short
         return;
     }
 
     try {
-        const res = await fetch(`https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=5`);
+        const res = await fetch(`https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=10`);
         if (!res.ok) throw new Error('Suggestion API failed');
         
         const data = await res.json();
@@ -894,6 +950,7 @@ async function fetchAndShowSuggestions(query) {
                     suggestionsContainer.innerHTML = '';
                     suggestionsContainer.classList.remove('active');
                     showLoading();
+                    addToSearchHistory(cleanName); // Add to history on click
                     searchSongsOnline(cleanName);
                 });
                 suggestionsContainer.appendChild(suggestionItem);
@@ -960,6 +1017,8 @@ function initHomePage() {
                 if (isFavoritesViewActive) {
                     renderFavoriteSongs();
                 } else {
+                    // When input is cleared, show history instead of last search
+                    showSearchHistory();
                     renderSongs(lastSearchedSongs);
                 }
                 return;
@@ -977,6 +1036,14 @@ function initHomePage() {
             }
         });
 
+        // Show history on focus if input is empty
+        searchInput.addEventListener('focus', () => {
+            const query = searchInput.value.trim();
+            if (query.length === 0) {
+                showSearchHistory();
+            }
+        });
+
         // Handle search on Enter key
         searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -989,6 +1056,7 @@ function initHomePage() {
                 const query = searchInput.value.trim();
                 if (query) {
                     showLoading();
+                    addToSearchHistory(query); // Add to history on search
                     searchSongsOnline(query);
                 }
             }

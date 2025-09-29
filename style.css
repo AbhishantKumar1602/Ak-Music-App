@@ -252,6 +252,18 @@ nav a.active::after {
     color: var(--text-primary);
 }
 
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.history-item i {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    width: 1em; /* Align text */
+}
+
 /* Container */
 .container {
     padding: 0 1rem 10rem 1rem;
