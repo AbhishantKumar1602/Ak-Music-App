@@ -51,11 +51,27 @@
           <span>AK Tunes</span>
         </a>
       </li>
+      <li class="search-item">
+        <div class="search-bar">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="searchInput" placeholder="Search for songs, artists, or albums..." />
+          <div class="search-suggestions" id="searchSuggestions"></div>
+        </div>
+      </li>
+
       <div class="nav-links" id="navLinks">
         <li><a href="home.html" class="nav-link active" data-page="home.html">Home</a></li>
         <li><a href="about.html" class="nav-link" data-page="about.html">About</a></li>
+        <li><a href="artists.html" class="nav-link" data-page="artists.html">Artists</a></li>
         <li><a href="contact.html" class="nav-link" data-page="contact.html">Contact</a></li>
       </div>
+      
+      <li class="nav-action-item">
+        <button id="theme-toggle" class="control-btn" title="Toggle theme" aria-label="Toggle theme">
+          <i class="fas fa-sun"></i>
+        </button>
+      </li>
+
       <button class="mobile-menu-toggle" id="mobileMenuToggle">
         <i class="fas fa-bars"></i>
       </button>
@@ -148,6 +164,9 @@
                 break;
               case 'about.html':
                 loadingText.textContent = "Loading about Us...";
+                break;
+              case 'artists.html':
+                loadingText.textContent = "Finding top artists...";
                 break;
               case 'contact.html':
                 loadingText.textContent = "Loading contact Us...";

@@ -1,32 +1,19 @@
-<div class="search-container">
-    <div class="search-bar">
-        <i class="fas fa-search search-icon"></i>
-        <input type="text" id="searchInput" placeholder="Search for songs, artists, or albums..." />
-        <div class="search-suggestions" id="searchSuggestions"></div>
-    </div>
-</div>
-
-<!-- Song List -->
-<div class="container">
-    <div class="songList">
-        <div class="section-header">
-            <h1>Best of AK Songs</h1>
-            <div class="view-toggle">
-                <button class="view-btn active" data-view="grid" aria-label="Grid view">
-                    <i class="fas fa-th-large"></i>
-                </button>
-                <button class="view-btn" data-view="list" aria-label="List view">
-                    <i class="fas fa-list"></i>
-                </button>
-            </div>
-        </div>
-        <div class="songItemContainer grid-view" id="songList">
-            <!-- Songs will be loaded dynamically -->
-            <div class="loading-skeleton">
-                <div class="skeleton-item"></div>
-                <div class="skeleton-item"></div>
-                <div class="skeleton-item"></div>
-                <div class="skeleton-item"></div>
+<div class="main-layout">
+    <div class="main-content">
+        <div class="container songlist-container">
+            <div class="songList">
+                <div class="section-header">
+                    <h1 id="songListTitle">Best of AK Songs</h1>
+                </div>
+                <div class="songItemContainer grid-view" id="songList">
+                    <!-- Songs will be loaded dynamically -->
+                    <div class="loading-skeleton">
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

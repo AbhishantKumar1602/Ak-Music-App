@@ -1,3 +1,17 @@
+// Render a list of artists in the artistListContainer
+function renderArtists(artists) {
+    const artistList = document.getElementById('artistList');
+    if (!artistList) return;
+    artistList.innerHTML = '';
+    if (!artists || artists.length === 0) {
+        artistList.innerHTML = '<div class="empty-state"><p>No artists found.</p></div>';
+        return;
+    }
+    artists.forEach(artist => {
+        const card = renderArtistCard(artist);
+        artistList.appendChild(card);
+    });
+}
 const searchSongQuery = "best hindi songs";
 const masterPlay = document.getElementById("masterPlay");
 const myProgressBar = document.getElementById("myProgressBar");
@@ -331,27 +345,33 @@ function renderFavoriteSongs() {
     }
 }
 
-document.getElementById("showFavoritesBtn")?.addEventListener('click', (e) => {
-    const btn = e.currentTarget;
+function toggleFavoritesView(forceShow = null) {
+    const btn = document.getElementById("showFavoritesBtn");
+    if (!btn) return;
     const icon = btn.querySelector('i');
-    isFavoritesViewActive = !isFavoritesViewActive; // Toggle state
-
+    if (forceShow === true) {
+        isFavoritesViewActive = true;
+    } else if (forceShow === false) {
+        isFavoritesViewActive = false;
+    } else {
+        isFavoritesViewActive = !isFavoritesViewActive;
+    }
     if (isFavoritesViewActive) {
-        // Entering favorites view
         renderFavoriteSongs();
         showNotification("Showing favorite songs", 'info');
         btn.classList.add('active');
         icon.classList.remove('far');
         icon.classList.add('fas');
     } else {
-        // Exiting favorites view, restore last list
         renderSongs(lastSearchedSongs);
         showNotification("Showing all songs", 'info');
         btn.classList.remove('active');
         icon.classList.remove('fas');
         icon.classList.add('far');
     }
-});
+}
+
+document.getElementById("showFavoritesBtn")?.addEventListener('click', () => toggleFavoritesView());
 
 // Enhanced master play/pause with better state management
 masterPlay.addEventListener("click", () => {
@@ -777,6 +797,142 @@ function initApp() {
 
     songs = localSongs;
     lastSearchedSongs = [...localSongs];
+
+    // Add dynamic CSS styles for the app
+    if (!document.getElementById('dynamicStyles')) {
+        const appStyles = document.createElement('style');
+        appStyles.id = 'dynamicStyles';
+        appStyles.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            .empty-state {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 4rem 2rem;
+                text-align: center;
+                grid-column: 1 / -1;
+            }
+            .songItem.active {
+                background: var(--bg-card-hover) !important;
+                border-color: var(--primary-color) !important;
+                box-shadow: var(--shadow-glow) !important;
+            }
+
+            /* Artist Grid Styles */
+            .artist-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .artist-card {
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius-lg);
+                overflow: hidden;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .artist-card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--shadow-lg);
+                border-color: var(--primary-color);
+            }
+
+            .artist-image {
+                width: 100%;
+                padding-top: 100%;
+                position: relative;
+                overflow: hidden;
+                background: var(--bg-card-hover);
+            }
+
+            .artist-image img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+            .artist-card:hover .artist-image img {
+                transform: scale(1.1);
+            }
+
+            .artist-info {
+                padding: 1rem;
+                text-align: center;
+            }
+
+            .artist-name {
+                margin: 0;
+                font-size: 1.1rem;
+                color: var(--text-primary);
+                font-weight: 600;
+            }
+
+            .artist-role {
+                display: block;
+                margin-top: 0.5rem;
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+            }
+
+            #artistSearchInput {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius-md);
+                background: var(--bg-input);
+                color: var(--text-primary);
+                margin-bottom: 1.5rem;
+            }
+
+            #artistSearchInput:focus {
+                border-color: var(--primary-color);
+                outline: none;
+                box-shadow: var(--shadow-glow);
+            }
+
+            /* Loading Overlay Fix */
+            #loadingOverlay {
+                position: fixed;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background: rgba(15, 15, 35, 0.9);
+                backdrop-filter: blur(10px);
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                z-index: 1000 !important;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            #loadingOverlay.show {
+                opacity: 1;
+                visibility: visible;
+            }
+        `;
+        document.head.appendChild(appStyles);
+    }
     
     // Set initial volume
     audio.volume = 1;
@@ -849,8 +1005,41 @@ function initApp() {
             showNotification(isRepeating ? 'Repeat enabled' : 'Repeat disabled', 'info');
         });
     }
+}
 
-    document.head.appendChild(style);
+function initTheme() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    const themeIcon = themeToggle.querySelector('i');
+
+    const applyTheme = (theme) => {
+        if (theme === 'light') {
+            body.classList.add('light-theme');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        } else {
+            body.classList.remove('light-theme');
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+        }
+        localStorage.setItem('theme', theme);
+    };
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = body.classList.contains('light-theme') ? 'light' : 'dark';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        applyTheme(newTheme);
+    });
+
+    // Load saved theme or use system preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else {
+        applyTheme(prefersDark ? 'dark' : 'light');
+    }
 }
 
 const MAX_HISTORY_ITEMS = 10;
@@ -1173,24 +1362,347 @@ function initContactPage() {
     }
 }
 
-function initAboutPage() {
-    hideLoading();
-    // No specific JS for about page yet, just hide the loader
+
+
+
+async function fetchArtistSongsUnlimited(artistId, artistName) {
+    try {
+        showLoading(`Loading songs by ${artistName}...`);
+        let allSongs = [];
+        const limit = 50;       // API limit per page
+        const maxPages = 20;    // Maximum pages to fetch to avoid overload
+
+        // Fetch songs page by page
+        for (let page = 1; page <= maxPages; page++) {
+            const res = await fetch(`https://saavn.dev/api/artists/${artistId}/songs?page=${page}&limit=${limit}`);
+            if (!res.ok) throw new Error(`Failed to fetch artist songs, page ${page}`);
+
+            const data = await res.json();
+            const songsOnPage = (data.data?.songs || []).map(song => ({
+                name: song.name || 'Unknown Song',
+                artist: artistName,
+                filePath: song.downloadUrl?.length
+                    ? song.downloadUrl[song.downloadUrl.length - 1].url
+                    : "",
+                coverPath: song.image?.length
+                    ? song.image[song.image.length - 1].url.replace('150x150', '500x500')
+                    : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
+            })).filter(song => song.filePath);
+
+            if (songsOnPage.length === 0) break; // Stop if no songs found on this page
+
+            allSongs = allSongs.concat(songsOnPage);
+        }
+
+        if (allSongs.length === 0) {
+            showNotification(`No songs found for ${artistName}`, 'warning');
+        }
+
+        // Shuffle and limit results for performance
+        const shuffledSongs = allSongs.sort(() => Math.random() - 0.5);
+        songs = shuffledSongs.slice(0, 300); // max 300 songs
+        lastSearchedSongs = [...songs];
+
+        // Render songs
+        await loadPage('home.html', true, false);
+        renderSongs(songs);
+
+        const songListTitle = document.getElementById('songListTitle');
+        if (songListTitle) {
+            songListTitle.textContent = `Top Songs by ${artistName}`;
+        }
+
+    } catch (error) {
+        console.error('Error fetching artist songs:', error);
+        showNotification('Could not load artist songs.', 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+
+
+
+
+
+
+// Artist card rendering with enhanced styling and click handling
+function createSongElement(song, index) {
+    const songItem = document.createElement('div');
+    songItem.className = 'songItem';
+    songItem.dataset.index = index;
+    
+    songItem.innerHTML = `
+        <img src="${song.coverPath}" alt="${song.name}">
+        <div class="songInfo">
+            <span class="songName">${song.name}</span>
+            <span class="artistName">${song.artist}</span>
+        </div>
+        <div class="songItemPlay songPlay" data-index="${index}">
+            <i class="fas fa-play-circle"></i>
+        </div>
+        ${song.isLiked ? '<i class="fas fa-heart liked"></i>' : '<i class="far fa-heart"></i>'}
+    `;
+    
+    return songItem;
+}
+
+function renderArtistCard(artist) {
+    const artistCard = document.createElement('div');
+    artistCard.className = 'artist-card fade-in';
+    artistCard.innerHTML = `
+        <div class="artist-image">
+            <img src="${artist.image[2]?.url || artist.image[1]?.url || artist.image[0]?.url}" 
+                 alt="${artist.name}" 
+                 loading="lazy" 
+                 onerror="this.src='https://via.placeholder.com/120x120/6366f1/ffffff?text=${encodeURIComponent(artist.name.charAt(0))}'"/>
+        </div>
+        <div class="artist-info">
+            <h3 class="artist-name">${artist.name}</h3>
+            ${artist.role ? `<span class="artist-role">${artist.role}</span>` : ''}
+        </div>
+    `;
+    
+    // Add click handler to load artist songs
+    artistCard.addEventListener('click', async (e) => {
+        e.preventDefault();
+        // Immediately navigate to home page
+        await loadPage('home.html', true, false);
+        
+        // Set up the page for artist songs
+        const songListTitle = document.getElementById('songListTitle');
+        if (songListTitle) {
+            songListTitle.textContent = `Top Songs by ${artist.name}`;
+        }
+        
+        // Initialize empty songs array
+        songs = [];
+        lastSearchedSongs = [];
+        let collectedSongs = [];
+        let renderTimeout;
+        
+        // Function to render songs with debounce
+        const debouncedRender = () => {
+            clearTimeout(renderTimeout);
+            renderTimeout = setTimeout(() => {
+                songs = [...songs, ...collectedSongs];
+                lastSearchedSongs = [...songs];
+                renderSongs(songs);
+                collectedSongs = [];
+            }, 1000); // Wait 1 second before rendering
+        };
+        
+        // Start loading songs in the background
+        try {
+            let page = 1;
+            let hasMore = true;
+            
+            while (hasMore) {
+                const res = await fetch(`https://saavn.dev/api/artists/${artist.id}/songs?page=${page}&limit=50`);
+                if (!res.ok) throw new Error('Failed to fetch artist songs');
+                const data = await res.json();
+                
+                const newSongs = (data.data?.songs || [])
+                    .map(song => ({
+                        name: song.name || 'Unknown Song',
+                        artist: artist.name,
+                        filePath: song.downloadUrl?.length
+                            ? song.downloadUrl[song.downloadUrl.length - 1].url
+                            : "",
+                        coverPath: song.image?.length
+                            ? song.image[song.image.length - 1].url.replace('150x150', '500x500')
+                            : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
+                    }))
+                    .filter(song => song.filePath);
+                
+                if (newSongs.length > 0) {
+                    // Collect new songs
+                    collectedSongs.push(...newSongs);
+                    
+                    // If this is the first batch, render immediately
+                    if (songs.length === 0) {
+                        songs = [...newSongs];
+                        lastSearchedSongs = [...songs];
+                        renderSongs(songs);
+                        collectedSongs = [];
+                    } else {
+                        // Otherwise use debounced render
+                        debouncedRender();
+                    }
+                }
+                
+                // Check if we should continue loading more
+                hasMore = newSongs.length > 0 && page < 10; // Limit to 10 pages max
+                page++;
+                
+                // Small delay to prevent rate limiting
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            // Final render to ensure all songs are displayed
+            if (collectedSongs.length > 0) {
+                clearTimeout(renderTimeout);
+                songs = [...songs, ...collectedSongs];
+                lastSearchedSongs = [...songs];
+                renderSongs(songs);
+            }
+            
+            if (songs.length === 0) {
+                showNotification(`No songs found for ${artist.name}`, 'warning');
+            }
+        } catch (error) {
+            console.error('Error loading artist songs:', error);
+            showNotification('Could not load songs for ' + artist.name, 'error');
+        }
+    });
+    
+    return artistCard;
+}
+
+
+
+const searchArtists = async (query, isInitial = false) => {
+    showLoading("Finding top artists...");
+    const artistListContainer = document.getElementById('artistList');
+    if (!artistListContainer) {
+        console.error('Artist list container not found');
+        hideLoading();
+        return;
+    }
+
+    try {
+        const res = await fetch(`https://saavn.dev/api/search/artists?query=${encodeURIComponent(query)}&page=100&limit=100`);
+        if (!res.ok) throw new Error('Artist search failed');
+        const data = await res.json();
+        console.log('Artist search response:', data); // Debug log
+
+        if (data.success && data.data.results.length > 0) {
+            // Deduplicate artists by name
+            const seen = new Set();
+            const uniqueArtists = data.data.results.filter(artist => {
+                const name = artist.name.trim().toLowerCase();
+                if (!seen.has(name)) {
+                    seen.add(name);
+                    return true;
+                }
+                return false;
+            });
+
+            renderArtists(uniqueArtists); // Render only unique artists
+        } else {
+            artistListContainer.innerHTML = !isInitial 
+                ? `<div class="empty-state"><p>No artists found for "${query}"</p></div>`
+                : `<div class="empty-state"><p>Search for your favorite artist to begin.</p></div>`;
+        }
+    } catch (error) {
+        console.error('Error searching artists:', error);
+        artistListContainer.innerHTML = `<div class="empty-state">
+            <p>Error loading artists. Please try again.</p>
+        </div>`;
+    } finally {
+        hideLoading();
+    }
+};
+
+// Centralized page loading function
+async function loadPage(page, push = true, doInit = true) {
+    const content = document.getElementById("pageContent");
+    const links = document.querySelectorAll(".nav-link");
+    
+    const loadingMessages = {
+        'home.html': "Loading amazing music...",
+        'about.html': "Loading about us...",
+        'artists.html': "Finding top artists...",
+        'contact.html': "Loading contact info...",
+    };
+    showLoading(loadingMessages[page] || "Loading...");
+
+    try {
+        const response = await fetch("pages/" + page);
+        if (!response.ok) throw new Error(`Failed to load ${page}`);
+        const html = await response.text();
+
+        content.innerHTML = html;
+        if (push) {
+            history.pushState({ page }, "", page);
+        }
+
+        // Update active nav link
+        links.forEach(l => l.classList.remove("active"));
+        const activeLink = [...links].find(l => l.dataset.page === page);
+        if (activeLink) activeLink.classList.add("active");
+
+        // Initialize page-specific scripts
+        if (doInit && typeof initPage === 'function') {
+            initPage(page);
+        } else {
+            hideLoading();
+        }
+    } catch (error) {
+        console.error("Error loading page:", error);
+        content.innerHTML = `<div class="empty-state"><h1>Oops!</h1><p>Could not load the page. Please try again.</p></div>`;
+        hideLoading();
+    }
 }
 
 /**
  * This is the main router function called from index.html
  * after a page's content has been loaded into the DOM.
  */
-function initPage(page) {
-    if (page === 'home.html') {
-        initHomePage();
-    } else if (page === 'contact.html') {
-        initContactPage();
-    } else if (page === 'about.html') {
-        initAboutPage();
+
+function initArtistsPage() {
+    const artistSearchInput = document.getElementById('artistSearchInput');
+    if (artistSearchInput) {
+        artistSearchInput.addEventListener('input', (e) => {
+            clearTimeout(suggestionTimeout);
+            const query = e.target.value.trim();
+            if (query.length > 1) {
+                suggestionTimeout = setTimeout(() => {
+                    searchArtists(query, false);
+                }, 300); // Debounce for 300ms
+            }
+        });
+
+        // Handle search on Enter key
+        artistSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const query = artistSearchInput.value.trim();
+                if (query) {
+                    searchArtists(query, false);
+                }
+            }
+        });
+    }
+
+    
+
+    searchArtists("all popular artist", true);
+}
+
+
+async function initPage(page) {
+    // This function is now the single entry point for initializing page-specific JS
+    switch (page) {
+        case 'home.html':
+            initHomePage();
+            break;
+        case 'artists.html':
+            initArtistsPage();
+            break;
+        case 'contact.html':
+            initContactPage();
+            break;
+        case 'about.html':
+            // No specific JS for about page, just hide the loader
+            hideLoading();
+            break;
+        default:
+            hideLoading();
+            break;
     }
 }
 
 // Initialize the application's global components
 initApp();
+initTheme();
