@@ -5,13 +5,13 @@ User-agent: *
 Allow: /
 
 # Priority pages for crawling
-Allow: /pages/home.html
-Allow: /pages/electronic-music.html
-Allow: /pages/gaming-music.html
-Allow: /pages/youtube-music.html
-Allow: /pages/artists.html
-Allow: /pages/about.html
-Allow: /pages/contact.html
+Allow: /home.html
+Allow: /electronic-music.html
+Allow: /gaming-music.html
+Allow: /youtube-music.html
+Allow: /artists.html
+Allow: /about.html
+Allow: /contact.html
 
 # Allow static files
 Allow: /ak.png

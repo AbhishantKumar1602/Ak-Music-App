@@ -1,5 +1,5 @@
 # Netlify Build Configuration for AK Tunes
-# Simplified and optimized for deployment
+# Optimized for global performance and SEO
 
 [build]
   publish = "."
@@ -7,29 +7,45 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  NPM_VERSION = "9"
 
-# Simplified headers to prevent conflicts
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Essential redirects only
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.mp3"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Accept-Ranges = "bytes"
+
 [[redirects]]
   from = "/music/electronic"
-  to = "/pages/electronic-music.html"
+  to = "/electronic-music.html"
   status = 301
 
 [[redirects]]
   from = "/music/gaming"
-  to = "/pages/gaming-music.html"
+  to = "/gaming-music.html"
   status = 301
 
 [[redirects]]
   from = "/music/youtube"
-  to = "/pages/youtube-music.html"
+  to = "/youtube-music.html"
   status = 301
 
 [[redirects]]
@@ -42,11 +58,16 @@
   to = "/"
   status = 301
 
-# SPA fallback - MUST be last
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Plugin configuration for optimization
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+  [plugins.inputs]
+    buildDir = "."
 
 [dev]
   port = 8000

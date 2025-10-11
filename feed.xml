@@ -33,7 +33,7 @@
     <!-- Featured Music Categories -->
     <item>
       <title>🎮 Epic Gaming Music Collection - Perfect for Streamers</title>
-      <link>https://aktunes.netlify.app/pages/gaming-music.html</link>
+      <link>https://aktunes.netlify.app/gaming-music.html</link>
       <description><![CDATA[Discover our epic gaming music collection! High-energy tracks perfect for Twitch streams, YouTube gaming content, and esports events. All tracks are copyright-free and optimized for content creators.]]></description>
       <content:encoded><![CDATA[
         <h2>🎮 Epic Gaming Music for Content Creators</h2>
@@ -50,15 +50,15 @@
       <category>Gaming Music</category>
       <category>Streaming</category>
       <category>Content Creation</category>
-      <pubDate>Fri, 11 Oct 2025 09:00:00 GMT</pubDate>
-      <guid isPermaLink="true">https://aktunes.netlify.app/pages/gaming-music.html</guid>
+      <pubDate>Wed, 15 Jan 2025 09:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://aktunes.netlify.app/gaming-music.html</guid>
       <dc:creator>AK Tunes</dc:creator>
       <enclosure url="https://aktunes.netlify.app/covers/gaming-bg.jpg" length="0" type="image/jpeg"/>
     </item>
 
     <item>
       <title>🎵 Electronic Music Paradise - Free EDM & House Tracks</title>
-      <link>https://aktunes.netlify.app/pages/electronic-music.html</link>
+      <link>https://aktunes.netlify.app/electronic-music.html</link>
       <description><![CDATA[Dive into our electronic music collection! From deep house to progressive EDM, find the perfect beats for your content. Popular with DJs, fitness instructors, and video creators worldwide.]]></description>
       <content:encoded><![CDATA[
         <h2>🎵 Electronic Music Collection</h2>
@@ -75,15 +75,15 @@
       <category>Electronic Music</category>
       <category>EDM</category>
       <category>House Music</category>
-      <pubDate>Fri, 11 Oct 2025 08:30:00 GMT</pubDate>
-      <guid isPermaLink="true">https://aktunes.netlify.app/pages/electronic-music.html</guid>
+      <pubDate>Wed, 15 Jan 2025 08:30:00 GMT</pubDate>
+      <guid isPermaLink="true">https://aktunes.netlify.app/electronic-music.html</guid>
       <dc:creator>AK Tunes</dc:creator>
       <enclosure url="https://aktunes.netlify.app/covers/electronic-bg.jpg" length="0" type="image/jpeg"/>
     </item>
 
     <item>
       <title>📺 YouTube Background Music - Copyright-Safe for Monetization</title>
-      <link>https://aktunes.netlify.app/pages/youtube-music.html</link>
+      <link>https://aktunes.netlify.app/youtube-music.html</link>
       <description><![CDATA[YouTube creators rejoice! Our specially curated background music collection is 100% monetization-safe. No copyright claims, perfect for vlogs, tutorials, and commercial content.]]></description>
       <content:encoded><![CDATA[
         <h2>📺 YouTube Background Music Collection</h2>
@@ -100,8 +100,8 @@
       <category>YouTube Music</category>
       <category>Background Music</category>
       <category>Monetization Safe</category>
-      <pubDate>Fri, 11 Oct 2025 08:00:00 GMT</pubDate>
-      <guid isPermaLink="true">https://aktunes.netlify.app/pages/youtube-music.html</guid>
+      <pubDate>Wed, 15 Jan 2025 08:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://aktunes.netlify.app/youtube-music.html</guid>
       <dc:creator>AK Tunes</dc:creator>
       <enclosure url="https://aktunes.netlify.app/covers/youtube-bg.jpg" length="0" type="image/jpeg"/>
     </item>
@@ -109,7 +109,7 @@
     <!-- Platform Updates -->
     <item>
       <title>🌍 AK Tunes Goes Global - Now Serving 50,000+ Creators Worldwide</title>
-      <link>https://aktunes.netlify.app/pages/about.html</link>
+      <link>https://aktunes.netlify.app/about.html</link>
       <description><![CDATA[AK Tunes reaches a major milestone! We're now serving over 50,000 content creators worldwide with our free royalty-free music platform. Thank you for making us the world's fastest-growing music resource for creators!]]></description>
       <content:encoded><![CDATA[
         <h2>🌍 Global Milestone Achievement</h2>
@@ -126,15 +126,15 @@
       <category>Platform Update</category>
       <category>Community</category>
       <category>Global Reach</category>
-      <pubDate>Fri, 11 Oct 2025 07:30:00 GMT</pubDate>
-      <guid isPermaLink="true">https://aktunes.netlify.app/pages/about.html</guid>
+      <pubDate>Wed, 15 Jan 2025 07:30:00 GMT</pubDate>
+      <guid isPermaLink="true">https://aktunes.netlify.app/about.html</guid>
       <dc:creator>Abhishant Kumar</dc:creator>
     </item>
 
     <!-- Featured Artists -->
     <item>
       <title>🎤 Featured Artists Spotlight - Meet Our Global Music Contributors</title>
-      <link>https://aktunes.netlify.app/pages/artists.html</link>
+      <link>https://aktunes.netlify.app/artists.html</link>
       <description><![CDATA[Discover the talented artists behind AK Tunes' music library. Our global network of musicians creates diverse, high-quality tracks specifically for content creators and commercial use.]]></description>
       <content:encoded><![CDATA[
         <h2>🎤 Meet Our Featured Artists</h2>
@@ -151,15 +151,15 @@
       <category>Artists</category>
       <category>Music Production</category>
       <category>Global Talent</category>
-      <pubDate>Fri, 11 Oct 2025 07:00:00 GMT</pubDate>
-      <guid isPermaLink="true">https://aktunes.netlify.app/pages/artists.html</guid>
+      <pubDate>Wed, 15 Jan 2025 07:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://aktunes.netlify.app/artists.html</guid>
       <dc:creator>AK Tunes</dc:creator>
     </item>
 
     <!-- How-to Guide -->
     <item>
       <title>📚 Complete Guide: How to Use Royalty-Free Music Legally</title>
-      <link>https://aktunes.netlify.app/pages/contact.html</link>
+      <link>https://aktunes.netlify.app/contact.html</link>
       <description><![CDATA[Learn everything about using royalty-free music legally in your content. From YouTube monetization to commercial projects, we've got you covered with this comprehensive guide.]]></description>
       <content:encoded><![CDATA[
         <h2>📚 Legal Use of Royalty-Free Music</h2>
@@ -176,8 +176,8 @@
       <category>Education</category>
       <category>Legal Guide</category>
       <category>Music Licensing</category>
-      <pubDate>Fri, 11 Oct 2025 06:30:00 GMT</pubDate>
-      <guid isPermaLink="true">https://aktunes.netlify.app/pages/contact.html</guid>
+      <pubDate>Wed, 15 Jan 2025 06:30:00 GMT</pubDate>
+      <guid isPermaLink="true">https://aktunes.netlify.app/contact.html</guid>
       <dc:creator>AK Tunes Legal Team</dc:creator>
     </item>
 
