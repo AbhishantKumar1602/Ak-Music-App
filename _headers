@@ -1,5 +1,5 @@
-# Global Headers for AK Tunes - Optimized for Performance & SEO
-# Enhanced caching, security, and international performance
+# Global Headers for AK Tunes - Netlify Optimized
+# Fixed compression and performance headers
 
 /*
   # Security Headers
@@ -7,118 +7,50 @@
   X-Content-Type-Options: nosniff
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   
-  # Performance Headers
-  Cache-Control: public, max-age=31536000, immutable
+  # Basic Performance Headers
+  Cache-Control: public, max-age=86400
   
   # CORS Headers for Global Access
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET, POST, OPTIONS
-  Access-Control-Allow-Headers: Content-Type, Authorization
-  
-  # Compression
-  Content-Encoding: br, gzip
-  
-  # Service Worker
-  Service-Worker-Allowed: /
 
-# HTML Pages - Shorter cache for dynamic content
+# HTML Pages - Dynamic content
 /*.html
   Cache-Control: public, max-age=3600, must-revalidate
-  Content-Security-Policy: default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; media-src 'self' https:; connect-src 'self' https:;
 
 # Static Assets - Long cache
 /*.css
   Cache-Control: public, max-age=31536000, immutable
-  Content-Type: text/css; charset=utf-8
 
 /*.js
   Cache-Control: public, max-age=31536000, immutable
-  Content-Type: application/javascript; charset=utf-8
 
-# Images - Long cache with optimization
+# Images - Long cache
 /*.png
   Cache-Control: public, max-age=31536000, immutable
-  Content-Type: image/png
 
 /*.jpg
   Cache-Control: public, max-age=31536000, immutable
-  Content-Type: image/jpeg
 
 /*.jpeg
   Cache-Control: public, max-age=31536000, immutable
-  Content-Type: image/jpeg
 
-/*.webp
-  Cache-Control: public, max-age=31536000, immutable
-  Content-Type: image/webp
-
-/*.svg
-  Cache-Control: public, max-age=31536000, immutable
-  Content-Type: image/svg+xml
-
-# Audio Files - Optimized for streaming
+# Audio Files - Streaming optimized
 /*.mp3
   Cache-Control: public, max-age=2592000
-  Content-Type: audio/mpeg
   Accept-Ranges: bytes
-
-/*.wav
-  Cache-Control: public, max-age=2592000
-  Content-Type: audio/wav
-  Accept-Ranges: bytes
-
-/*.ogg
-  Cache-Control: public, max-age=2592000
-  Content-Type: audio/ogg
-  Accept-Ranges: bytes
-
-# Fonts - Long cache
-/*.woff2
-  Cache-Control: public, max-age=31536000, immutable
-  Content-Type: font/woff2
-
-/*.woff
-  Cache-Control: public, max-age=31536000, immutable
-  Content-Type: font/woff
-
-/*.ttf
-  Cache-Control: public, max-age=31536000, immutable
-  Content-Type: font/ttf
-
-# Manifest and Service Worker
-/manifest.json
-  Cache-Control: public, max-age=86400
-  Content-Type: application/manifest+json
-
-/sw.js
-  Cache-Control: public, max-age=0, must-revalidate
-  Content-Type: application/javascript
 
 # SEO Files
 /sitemap.xml
   Cache-Control: public, max-age=86400
-  Content-Type: application/xml
 
 /robots.txt
   Cache-Control: public, max-age=86400
-  Content-Type: text/plain
 
 /feed.xml
   Cache-Control: public, max-age=3600
-  Content-Type: application/rss+xml
 
 # Favicon
 /favicon.ico
   Cache-Control: public, max-age=31536000, immutable
-  Content-Type: image/x-icon
-
-# 404 Error Page
-/404.html
-  Cache-Control: public, max-age=3600
-
-# API Endpoints (if any)
-/api/*
-  Cache-Control: no-cache, no-store, must-revalidate
-  Content-Type: application/json
