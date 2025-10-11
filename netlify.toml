@@ -1,0 +1,74 @@
+# Netlify Build Configuration for AK Tunes
+# Optimized for global performance and SEO
+
+[build]
+  publish = "."
+  command = "echo 'AK Tunes - Building for global deployment...'"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.mp3"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Accept-Ranges = "bytes"
+
+[[redirects]]
+  from = "/music/electronic"
+  to = "/pages/electronic-music.html"
+  status = 301
+
+[[redirects]]
+  from = "/music/gaming"
+  to = "/pages/gaming-music.html"
+  status = 301
+
+[[redirects]]
+  from = "/music/youtube"
+  to = "/pages/youtube-music.html"
+  status = 301
+
+[[redirects]]
+  from = "/free-music"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/royalty-free"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Plugin configuration for optimization
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+  [plugins.inputs]
+    buildDir = "."
+
+[dev]
+  port = 8000
+  autoLaunch = false

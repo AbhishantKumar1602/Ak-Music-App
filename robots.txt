@@ -1,4 +1,156 @@
+# Global SEO Robots.txt for AK Tunes - Free Royalty-Free Music Platform
+# Optimized for maximum search engine visibility and global reach
+
+# Allow all search engines full access
 User-agent: *
 Allow: /
 
+# Priority pages for crawling
+Allow: /pages/home.html
+Allow: /pages/electronic-music.html
+Allow: /pages/gaming-music.html
+Allow: /pages/youtube-music.html
+Allow: /pages/artists.html
+Allow: /pages/about.html
+Allow: /pages/contact.html
+
+# Allow access to essential static files
+Allow: /ak.png
+Allow: /favicon.ico
+Allow: /manifest.json
+Allow: /style.css
+Allow: /script.js
+
+# Allow access to music files and covers
+Allow: /songs/
+Allow: /covers/
+Allow: /pages/
+Allow: /public/
+
+# Disallow sensitive files for security
+Disallow: /EMAILJS_SETUP.md
+Disallow: /PROJECT_ANALYSIS.md
+Disallow: /_redirects
+Disallow: /apiReturn.json
+Disallow: /admin/
+Disallow: /private/
+Disallow: /tmp/
+Disallow: /*.log$
+Disallow: /*.bak$
+
+# Google-specific directives
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bing-specific directives
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Yahoo/Verizon crawler
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2
+
+# Yandex-specific directives
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 2
+
+# Baidu-specific directives
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 2
+
+# Social media crawlers for rich previews
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+User-agent: DiscordBot
+Allow: /
+
+User-agent: SkypeUriPreview
+Allow: /
+
+User-agent: SlackBot
+Allow: /
+
+# SEO & Analytics crawlers
+User-agent: AhrefsBot
+Allow: /
+Crawl-delay: 3
+
+User-agent: SemrushBot
+Allow: /
+Crawl-delay: 3
+
+User-agent: MJ12bot
+Allow: /
+Crawl-delay: 5
+
+User-agent: DotBot
+Allow: /
+Crawl-delay: 5
+
+# Archive crawlers
+User-agent: ia_archiver
+Allow: /
+
+User-agent: Wayback
+Allow: /
+
+# AI crawlers - Allow for better content understanding
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+# Block common spam bots
+User-agent: CCBot
+Disallow: /
+
+User-agent: Spam*
+Disallow: /
+
+User-agent: BadBot
+Disallow: /
+
+# Sitemap locations for better discovery
 Sitemap: https://aktunes.netlify.app/sitemap.xml
+Sitemap: https://aktunes.netlify.app/public/sitemap.xml
+
+# Additional feeds for content discovery
+Sitemap: https://aktunes.netlify.app/feed.xml
+Sitemap: https://aktunes.netlify.app/atom.xml
+
+# Host directive for primary domain
+Host: https://aktunes.netlify.app
+
+# Crawl delay for respectful crawling
+Crawl-delay: 1

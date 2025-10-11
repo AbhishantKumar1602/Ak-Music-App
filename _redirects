@@ -1,1 +1,46 @@
+# Global SEO Redirects for AK Tunes
+# Optimized for Netlify deployment and international reach
+
+# Primary SPA routing
 /*    /index.html   200
+
+# SEO-friendly redirects for music categories
+/music/electronic    /pages/electronic-music.html    301
+/music/gaming        /pages/gaming-music.html        301
+/music/youtube       /pages/youtube-music.html       301
+/electronic          /pages/electronic-music.html    301
+/gaming              /pages/gaming-music.html        301
+/youtube             /pages/youtube-music.html       301
+
+# Common search terms redirects
+/royalty-free        /index.html               301
+/copyright-free      /index.html               301
+/free-music          /index.html               301
+/background-music    /pages/youtube-music.html       301
+/content-creator     /index.html               301
+/twitch-music        /pages/gaming-music.html        301
+/stream-music        /pages/gaming-music.html        301
+/edm                 /pages/electronic-music.html    301
+/house-music         /pages/electronic-music.html    301
+
+# Legacy URL redirects
+/home                /pages/home.html                301
+/about               /pages/about.html               301
+/contact             /pages/contact.html             301
+/artists             /pages/artists.html             301
+
+# Social media tracking redirects
+/fb                  /index.html               302
+/twitter             /index.html               302
+/instagram           /index.html               302
+/youtube-channel     /index.html               302
+
+# API and feed redirects
+/rss                 /feed.xml                 301
+/feed                /feed.xml                 301
+/sitemap             /sitemap.xml              301
+
+# Force HTTPS and www removal
+https://www.aktunes.netlify.app/*  https://aktunes.netlify.app/:splat  301!
+http://aktunes.netlify.app/*       https://aktunes.netlify.app/:splat  301!
+http://www.aktunes.netlify.app/*   https://aktunes.netlify.app/:splat  301!

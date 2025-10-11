@@ -109,7 +109,7 @@ function resetSongItemIcons() {
 
 // Enhanced song rendering with improved UI
 function renderSongs(songArray) {
-    const songList = document.getElementById("songList");
+    const songList = document.getElementById("songList") || document.getElementById("genreSongList");
     if (!songList) {
         console.error("Song list container not found! Cannot render songs.");
         return;
@@ -1693,6 +1693,27 @@ async function initPage(page) {
         case 'contact.html':
             initContactPage();
             break;
+        case 'electronic-music.html':
+            if (typeof window.initElectronicPage === 'function') {
+                window.initElectronicPage();
+            } else {
+                hideLoading();
+            }
+            break;
+        case 'gaming-music.html':
+            if (typeof window.initGamingPage === 'function') {
+                window.initGamingPage();
+            } else {
+                hideLoading();
+            }
+            break;
+        case 'youtube-music.html':
+            if (typeof window.initYouTubePage === 'function') {
+                window.initYouTubePage();
+            } else {
+                hideLoading();
+            }
+            break;
         case 'about.html':
             // No specific JS for about page, just hide the loader
             hideLoading();
@@ -1706,3 +1727,333 @@ async function initPage(page) {
 // Initialize the application's global components
 initApp();
 initTheme();
+
+// Navigation Event Handlers - Set up immediately since DOM is already loaded
+function initNavigation() {
+    // Handle navigation clicks (only elements with data-page attribute)
+    const navLinks = document.querySelectorAll('.nav-link[data-page]');
+    console.log('Found navigation links:', navLinks.length);
+    console.log('Navigation links:', Array.from(navLinks).map(link => `${link.textContent.trim()} -> ${link.dataset.page}`));
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const page = this.dataset.page;
+            console.log('Navigation clicked:', page);
+            if (page) {
+                loadPage(page);
+                // Close dropdown if it's open
+                const dropdownMenu = document.querySelector('.nav-dropdown-menu');
+                const dropdownToggle = document.querySelector('.dropdown-toggle[data-dropdown]');
+                if (dropdownMenu && dropdownToggle) {
+                    dropdownMenu.classList.remove('show');
+                    dropdownToggle.classList.remove('active');
+                }
+            }
+        });
+    });
+    
+    // Handle dropdown toggle (separate from navigation)
+    const dropdownToggle = document.querySelector('.dropdown-toggle[data-dropdown]');
+    const dropdownMenu = document.querySelector('.nav-dropdown-menu');
+    
+    console.log('Dropdown toggle found:', !!dropdownToggle);
+    console.log('Dropdown menu found:', !!dropdownMenu);
+    
+    if (dropdownToggle && dropdownMenu) {
+        console.log('Setting up dropdown toggle');
+        
+        // Handle clicks on the dropdown toggle
+        dropdownToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Dropdown toggle clicked');
+            const isOpen = dropdownMenu.classList.contains('show');
+            
+            if (isOpen) {
+                dropdownMenu.classList.remove('show');
+                dropdownToggle.classList.remove('active');
+            } else {
+                dropdownMenu.classList.add('show');
+                dropdownToggle.classList.add('active');
+            }
+        });
+        
+        // Handle touch events for mobile
+        dropdownToggle.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Dropdown toggle touched');
+            const isOpen = dropdownMenu.classList.contains('show');
+            
+            if (isOpen) {
+                dropdownMenu.classList.remove('show');
+                dropdownToggle.classList.remove('active');
+            } else {
+                dropdownMenu.classList.add('show');
+                dropdownToggle.classList.add('active');
+            }
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.nav-dropdown')) {
+                dropdownMenu.classList.remove('show');
+                dropdownToggle.classList.remove('active');
+            }
+        });
+        
+        // Close dropdown when touching outside (mobile)
+        document.addEventListener('touchstart', function(e) {
+            if (!e.target.closest('.nav-dropdown')) {
+                dropdownMenu.classList.remove('show');
+                dropdownToggle.classList.remove('active');
+            }
+        });
+    } else {
+        console.log('Dropdown elements not found');
+    }
+}
+
+// Initialize navigation
+initNavigation();
+
+// Handle browser back/forward
+window.addEventListener('popstate', function(e) {
+    if (e.state && e.state.page) {
+        loadPage(e.state.page, false);
+    } else {
+        loadPage('home.html', false);
+    }
+});
+
+// Genre Pages Functions
+// Electronic Music Page Functions
+function searchElectronicMusic(query) {
+  if (typeof searchSongsOnline === 'function') {
+    searchSongsOnline(query);
+    // Update title to reflect search
+    const title = document.getElementById('songListTitle');
+    if (title) {
+      title.textContent = `${query.charAt(0).toUpperCase() + query.slice(1)} Music`;
+    }
+  }
+}
+
+// Quick search presets for electronic music
+function searchElectronicPreset(genre) {
+  const queries = {
+    'edm': 'electronic dance music EDM beats',
+    'house': 'house music electronic beats',
+    'techno': 'techno electronic music beats',
+    'dubstep': 'dubstep electronic music drops',
+    'trance': 'trance electronic music progressive',
+    'synthwave': 'synthwave retrowave electronic music',
+    'chillstep': 'chillstep electronic chill music',
+    'ambient': 'ambient electronic music atmospheric'
+  };
+  
+  const query = queries[genre] || `${genre} electronic music`;
+  searchElectronicMusic(query);
+}
+
+window.initElectronicPage = function() {
+  // Set up search functionality
+  const searchInput = document.getElementById('genreSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      if (query.length > 2) {
+        searchElectronicMusic(`${query} electronic music`);
+      } else if (query.length === 0) {
+        // Load default electronic music when search is cleared
+        searchElectronicMusic('electronic music beats');
+      }
+    });
+    
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        if (query) {
+          searchElectronicMusic(`${query} electronic music`);
+        } else {
+          searchElectronicMusic('electronic music beats');
+        }
+      }
+    });
+  }
+  
+  // Set up category card clicks
+  document.querySelectorAll('.category-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const onclick = this.getAttribute('onclick');
+      if (onclick && onclick.includes('searchElectronicMusic')) {
+        eval(onclick);
+      }
+    });
+  });
+  
+  // Load electronic music by default
+  searchElectronicMusic('electronic music beats');
+  
+  // Hide loading overlay
+  hideLoading();
+};
+
+// Gaming Music Page Functions
+function searchGamingMusic(query) {
+  if (typeof searchSongsOnline === 'function') {
+    searchSongsOnline(query);
+    // Update title to reflect search
+    const title = document.getElementById('songListTitle');
+    if (title) {
+      title.textContent = `${query.charAt(0).toUpperCase() + query.slice(1)} Tracks`;
+    }
+  }
+}
+
+// Quick search presets for gaming music
+function searchGamingPreset(genre) {
+  const queries = {
+    'epic': 'epic gaming music orchestral cinematic',
+    'battle': 'battle music gaming epic intense',
+    'boss': 'boss fight music gaming dramatic',
+    'ambient': 'ambient gaming music atmospheric background',
+    'victory': 'victory music gaming triumphant',
+    'action': 'action gaming music fast paced intense',
+    'adventure': 'adventure gaming music exploration',
+    'horror': 'horror gaming music dark scary atmospheric'
+  };
+  
+  const query = queries[genre] || `${genre} gaming music`;
+  searchGamingMusic(query);
+}
+
+window.initGamingPage = function() {
+  // Set up search functionality
+  const searchInput = document.getElementById('genreSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      if (query.length > 2) {
+        searchGamingMusic(`${query} gaming music`);
+      } else if (query.length === 0) {
+        // Load default gaming music when search is cleared
+        searchGamingMusic('epic gaming music beats');
+      }
+    });
+    
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        if (query) {
+          searchGamingMusic(`${query} gaming music`);
+        } else {
+          searchGamingMusic('epic gaming music beats');
+        }
+      }
+    });
+  }
+  
+  // Set up genre tag clicks
+  document.querySelectorAll('.genre-tag').forEach(tag => {
+    tag.addEventListener('click', function() {
+      const onclick = this.getAttribute('onclick');
+      if (onclick && onclick.includes('searchGamingMusic')) {
+        eval(onclick);
+      }
+    });
+  });
+  
+  // Load gaming music by default
+  searchGamingMusic('epic gaming music beats');
+  
+  // Hide loading overlay
+  hideLoading();
+};
+
+// YouTube Music Page Functions
+function searchYouTubeMusic(query) {
+  if (typeof searchSongsOnline === 'function') {
+    searchSongsOnline(query);
+    // Update title to reflect search
+    const title = document.getElementById('songListTitle');
+    if (title) {
+      title.textContent = `${query.charAt(0).toUpperCase() + query.slice(1)} Music`;
+    }
+  }
+}
+
+// Quick search presets for YouTube music
+function searchYouTubePreset(mood) {
+  const queries = {
+    'upbeat': 'upbeat background music youtube energetic',
+    'chill': 'chill background music youtube relaxing',
+    'cinematic': 'cinematic background music youtube dramatic',
+    'corporate': 'corporate background music youtube professional',
+    'acoustic': 'acoustic background music youtube organic',
+    'electronic': 'electronic background music youtube modern',
+    'ambient': 'ambient background music youtube atmospheric',
+    'motivational': 'motivational background music youtube inspiring'
+  };
+  
+  const query = queries[mood] || `${mood} background music youtube`;
+  searchYouTubeMusic(query);
+}
+
+window.initYouTubePage = function() {
+  // Set up search functionality
+  const searchInput = document.getElementById('genreSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      if (query.length > 2) {
+        searchYouTubeMusic(`${query} background music`);
+      } else if (query.length === 0) {
+        // Load default YouTube music when search is cleared
+        searchYouTubeMusic('youtube background music');
+      }
+    });
+    
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        if (query) {
+          searchYouTubeMusic(`${query} background music`);
+        } else {
+          searchYouTubeMusic('youtube background music');
+        }
+      }
+    });
+  }
+  
+  // Set up mood tag clicks
+  document.querySelectorAll('.mood-tag').forEach(tag => {
+    tag.addEventListener('click', function() {
+      const onclick = this.getAttribute('onclick');
+      if (onclick && onclick.includes('searchYouTubeMusic')) {
+        eval(onclick);
+      }
+    });
+  });
+  
+  // Set up niche item clicks
+  document.querySelectorAll('.niche-item').forEach(item => {
+    item.addEventListener('click', function() {
+      const onclick = this.getAttribute('onclick');
+      if (onclick && onclick.includes('searchYouTubeMusic')) {
+        eval(onclick);
+      }
+    });
+  });
+  
+  // Load YouTube music by default
+  searchYouTubeMusic('youtube background music');
+  
+  // Hide loading overlay
+  hideLoading();
+};

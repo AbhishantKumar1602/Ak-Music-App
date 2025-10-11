@@ -1,0 +1,149 @@
+{
+  "name": "AK Tunes - Free Royalty-Free Music Platform",
+  "short_name": "AK Tunes",
+  "description": "🎵 World's #1 free royalty-free music platform. Download high-quality MP3 songs for YouTube, content creation, gaming, podcasts & commercial projects. Join 50K+ creators worldwide!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "categories": ["music", "entertainment", "productivity", "education"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "icons": [
+    {
+      "src": "/ak.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/ak.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "AK Tunes Desktop Homepage"
+    },
+    {
+      "src": "/screenshots/mobile-music.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "AK Tunes Mobile Music Player"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Electronic Music",
+      "short_name": "Electronic",
+      "description": "Browse electronic music collection",
+      "url": "/electronic-music.html",
+      "icons": [
+        {
+          "src": "/icons/electronic-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Gaming Music",
+      "short_name": "Gaming",
+      "description": "Browse gaming music collection",
+      "url": "/gaming-music.html",
+      "icons": [
+        {
+          "src": "/icons/gaming-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "YouTube Music",
+      "short_name": "YouTube",
+      "description": "Browse YouTube background music",
+      "url": "/youtube-music.html",
+      "icons": [
+        {
+          "src": "/icons/youtube-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Search Music",
+      "short_name": "Search",
+      "description": "Search for music tracks",
+      "url": "/?search=true",
+      "icons": [
+        {
+          "src": "/icons/search-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "web",
+      "url": "https://aktunes.netlify.app/"
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 480
+  },
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "handle_links": "preferred",
+  "protocol_handlers": [
+    {
+      "protocol": "web+aktunes",
+      "url": "/?track=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "audio/mpeg": [".mp3"],
+        "audio/wav": [".wav"],
+        "audio/ogg": [".ogg"]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}

@@ -1,18 +1,235 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+
+    <!-- Main Homepage -->
   <url>
     <loc>https://aktunes.netlify.app/</loc>
-    <lastmod>2025-09-07</lastmod>
+    <lastmod>2025-10-11</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <mobile:mobile/>
+    <image:image>
+      <image:loc>https://aktunes.netlify.app/ak.png</image:loc>
+      <image:caption>AK Tunes - Free Music Download Platform for Global Content Creators</image:caption>
+      <image:title>Free Royalty-Free Music Downloads</image:title>
+    </image:image>
   </url>
+
+  <!-- Core Pages -->
+  <url>
+    <loc>https://aktunes.netlify.app/pages/home.html</loc>
+    <lastmod>2025-10-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <mobile:mobile/>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/pages/about.html</loc>
+    <lastmod>2025-10-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <mobile:mobile/>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/pages/contact.html</loc>
+    <lastmod>2025-10-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <mobile:mobile/>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/pages/artists.html</loc>
+    <lastmod>2025-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <mobile:mobile/>
+  </url>
+
+  <!-- High-Priority Genre Pages for Global SEO -->
+  <url>
+    <loc>https://aktunes.netlify.app/pages/electronic-music.html</loc>
+    <lastmod>2025-10-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <mobile:mobile/>
+    <image:image>
+      <image:loc>https://aktunes.netlify.app/covers/electronic-bg.jpg</image:loc>
+      <image:caption>Free Electronic Music Downloads - Royalty-Free EDM, House, Techno</image:caption>
+      <image:title>Electronic Music for Content Creators</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/pages/gaming-music.html</loc>
+    <lastmod>2025-10-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <mobile:mobile/>
+    <image:image>
+      <image:loc>https://aktunes.netlify.app/covers/gaming-bg.jpg</image:loc>
+      <image:caption>Free Gaming Music Downloads - Epic Background Music for Streams</image:caption>
+      <image:title>Gaming Music for Streamers and Content Creators</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/pages/youtube-music.html</loc>
+    <lastmod>2025-10-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <mobile:mobile/>
+    <image:image>
+      <image:loc>https://aktunes.netlify.app/covers/youtube-bg.jpg</image:loc>
+      <image:caption>Free YouTube Background Music - Copyright-Free Music for Videos</image:caption>
+      <image:title>YouTube Music for Content Creators</image:title>
+    </image:image>
+  </url>
+
+  <!-- Core Pages -->
+  <url>
+    <loc>https://aktunes.netlify.app/home.html</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <mobile:mobile/>
+  </url>
+
   <url>
     <loc>https://aktunes.netlify.app/about.html</loc>
-    <lastmod>2025-09-07</lastmod>
-    <priority>0.8</priority>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <mobile:mobile/>
   </url>
+
   <url>
     <loc>https://aktunes.netlify.app/contact.html</loc>
-    <lastmod>2025-09-07</lastmod>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <mobile:mobile/>
   </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/artists.html</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <mobile:mobile/>
+  </url>
+
+  <!-- High-Priority Genre Pages for Global SEO -->
+  <url>
+    <loc>https://aktunes.netlify.app/electronic-music.html</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <mobile:mobile/>
+    <image:image>
+      <image:loc>https://aktunes.netlify.app/covers/electronic-bg.jpg</image:loc>
+      <image:caption>Free Electronic Music Downloads - Royalty-Free EDM, House, Techno</image:caption>
+      <image:title>Electronic Music for Content Creators</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/gaming-music.html</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <mobile:mobile/>
+    <image:image>
+      <image:loc>https://aktunes.netlify.app/covers/gaming-bg.jpg</image:loc>
+      <image:caption>Free Gaming Music Downloads - Epic Background Music for Streams</image:caption>
+      <image:title>Gaming Music for Streamers and Content Creators</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/youtube-music.html</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <mobile:mobile/>
+    <image:image>
+      <image:loc>https://aktunes.netlify.app/covers/youtube-bg.jpg</image:loc>
+      <image:caption>Free YouTube Background Music - Copyright-Free Music for Videos</image:caption>
+      <image:title>YouTube Music for Content Creators</image:title>
+    </image:image>
+  </url>
+
+  <!-- Future expansion pages -->
+  <url>
+    <loc>https://aktunes.netlify.app/ambient-music.html</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <mobile:mobile/>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/podcast-music.html</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <mobile:mobile/>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/commercial-music.html</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <mobile:mobile/>
+  </url>
+
+  <!-- Dynamic Search URLs for SEO -->
+  <url>
+    <loc>https://aktunes.netlify.app/#search=royalty-free-music</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <mobile:mobile/>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/#search=copyright-free-music</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <mobile:mobile/>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/#search=content-creator-music</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <mobile:mobile/>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/#search=background-music</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <mobile:mobile/>
+  </url>
+
+  <url>
+    <loc>https://aktunes.netlify.app/#search=streaming-music</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <mobile:mobile/>
+  </url>
+
 </urlset>

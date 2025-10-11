@@ -1,4 +1,51 @@
+# Global SEO Robots.txt for AK Tunes
+# Optimized for maximum search engine visibility
+
 User-agent: *
 Allow: /
 
+# Priority pages for crawling
+Allow: /pages/home.html
+Allow: /pages/electronic-music.html
+Allow: /pages/gaming-music.html
+Allow: /pages/youtube-music.html
+Allow: /pages/artists.html
+Allow: /pages/about.html
+Allow: /pages/contact.html
+
+# Allow static files
+Allow: /ak.png
+Allow: /favicon.ico
+Allow: /manifest.json
+Allow: /style.css
+Allow: /script.js
+Allow: /songs/
+Allow: /covers/
+
+# Google-specific directives
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bing-specific directives
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Social media crawlers
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Sitemap locations
 Sitemap: https://aktunes.netlify.app/sitemap.xml
+Sitemap: https://aktunes.netlify.app/public/sitemap.xml
+Sitemap: https://aktunes.netlify.app/feed.xml
+
+# Host directive
+Host: https://aktunes.netlify.app
