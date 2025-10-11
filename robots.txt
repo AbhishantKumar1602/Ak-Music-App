@@ -1,69 +1,48 @@
-# Global SEO Robots.txt for AK Tunes - Free Royalty-Free Music Platform
-# Optimized for maximum search engine visibility and global reach
+# AK Tunes - Optimized for Top 4 Search Engines
+# Google, Bing, Yahoo, Yandex
 
-# Allow all search engines full access
+# Allow all search engines
 User-agent: *
 Allow: /
+Crawl-delay: 1
 
-# Priority pages for crawling
-Allow: /home.html
-Allow: /electronic-music.html
-Allow: /gaming-music.html
-Allow: /youtube-music.html
-Allow: /artists.html
-Allow: /about.html
-Allow: /contact.html
+# === TOP 4 SEARCH ENGINES ===
 
-# Allow access to essential static files
-Allow: /ak.png
-Allow: /favicon.ico
-Allow: /manifest.json
-Allow: /style.css
-Allow: /script.js
-
-# Allow access to music files and covers
-Allow: /songs/
-Allow: /covers/
-Allow: /pages/
-Allow: /public/
-
-# Disallow sensitive files for security
-Disallow: /EMAILJS_SETUP.md
-Disallow: /PROJECT_ANALYSIS.md
-Disallow: /_redirects
-Disallow: /apiReturn.json
-Disallow: /admin/
-Disallow: /private/
-Disallow: /tmp/
-Disallow: /*.log$
-Disallow: /*.bak$
-
-# Google-specific directives
+# Google (Global #1 - 92% market share)
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 1
 
-# Bing-specific directives
+User-agent: Googlebot-Image
+Allow: /covers/
+Allow: /ak.png
+Crawl-delay: 1
+
+# Bing/Microsoft (Global #2 - 3% market share)
 User-agent: Bingbot
 Allow: /
 Crawl-delay: 1
 
-# Yahoo/Verizon crawler
+User-agent: msnbot
+Allow: /
+Crawl-delay: 1
+
+# Yahoo (Powered by Bing)
 User-agent: Slurp
 Allow: /
-Crawl-delay: 2
+Crawl-delay: 1
 
-# Yandex-specific directives
+# Yandex (Russia #1 - 150M+ users)
 User-agent: YandexBot
 Allow: /
 Crawl-delay: 2
 
-# Baidu-specific directives
-User-agent: Baiduspider
-Allow: /
+User-agent: YandexImages
+Allow: /covers/
+Allow: /ak.png
 Crawl-delay: 2
 
-# Social media crawlers for rich previews
+# === SOCIAL MEDIA CRAWLERS ===
 User-agent: facebookexternalhit
 Allow: /
 
@@ -82,75 +61,17 @@ Allow: /
 User-agent: DiscordBot
 Allow: /
 
-User-agent: SkypeUriPreview
-Allow: /
-
-User-agent: SlackBot
-Allow: /
-
-# SEO & Analytics crawlers
-User-agent: AhrefsBot
-Allow: /
-Crawl-delay: 3
-
-User-agent: SemrushBot
-Allow: /
-Crawl-delay: 3
-
-User-agent: MJ12bot
-Allow: /
-Crawl-delay: 5
-
-User-agent: DotBot
-Allow: /
-Crawl-delay: 5
-
-# Archive crawlers
-User-agent: ia_archiver
-Allow: /
-
-User-agent: Wayback
-Allow: /
-
-# AI crawlers - Allow for better content understanding
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: GPTBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: YouBot
-Allow: /
-
-# Block common spam bots
-User-agent: CCBot
-Disallow: /
-
+# === BLOCK SPAM BOTS ===
 User-agent: Spam*
 Disallow: /
 
 User-agent: BadBot
 Disallow: /
 
-# Sitemap locations for better discovery
+# === SITEMAP LOCATIONS ===
 Sitemap: https://aktunes.netlify.app/sitemap.xml
-Sitemap: https://aktunes.netlify.app/public/sitemap.xml
-
-# Additional feeds for content discovery
 Sitemap: https://aktunes.netlify.app/feed.xml
 Sitemap: https://aktunes.netlify.app/atom.xml
 
-# Host directive for primary domain
+# === HOST DECLARATION ===
 Host: https://aktunes.netlify.app
-
-# Crawl delay for respectful crawling
-Crawl-delay: 1

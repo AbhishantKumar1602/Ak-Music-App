@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>AK Tunes - Free Royalty-Free Music Platform</title>
+  <subtitle>Global music downloads for content creators worldwide</subtitle>
+  <link href="https://aktunes.netlify.app/atom.xml" rel="self"/>
+  <link href="https://aktunes.netlify.app/"/>
+  <id>https://aktunes.netlify.app/</id>
+  <updated>2025-10-11T10:00:00Z</updated>
+  <author>
+    <name>Abhishant Kumar</name>
+    <email>official.abhishant.kumar@gmail.com</email>
+  </author>
+  <generator uri="https://aktunes.netlify.app/" version="1.0">AK Tunes</generator>
+  <icon>https://aktunes.netlify.app/ak.png</icon>
+  <logo>https://aktunes.netlify.app/ak.png</logo>
+  <rights>© 2024 AK Tunes. All music tracks are royalty-free for global use.</rights>
+  
+  <category term="Music" label="Free Music Downloads"/>
+  <category term="Content Creation" label="Creator Resources"/>
+  <category term="Royalty Free" label="Copyright-Free Music"/>
+  <category term="Global" label="Worldwide Access"/>
+
+  <!-- Electronic Music Category -->
+  <entry>
+    <title>🎵 Electronic Music Collection - Free EDM Downloads</title>
+    <link href="https://aktunes.netlify.app/electronic-music.html"/>
+    <id>https://aktunes.netlify.app/electronic-music.html</id>
+    <updated>2025-10-11T09:00:00Z</updated>
+    <summary>Discover our electronic music collection featuring deep house, progressive EDM, and ambient tracks perfect for content creators worldwide.</summary>
+    <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <h2>Electronic Music for Global Creators</h2>
+        <p>Our electronic music library includes:</p>
+        <ul>
+          <li>Deep House &amp; Progressive House</li>
+          <li>Future Bass &amp; Melodic Dubstep</li>
+          <li>Ambient Electronic &amp; Chillwave</li>
+          <li>Upbeat EDM &amp; Festival Tracks</li>
+        </ul>
+        <p>All tracks are 100% royalty-free with global commercial licensing.</p>
+      </div>
+    </content>
+    <category term="Electronic Music"/>
+    <category term="EDM"/>
+  </entry>
+
+  <!-- Gaming Music Category -->
+  <entry>
+    <title>🎮 Gaming Music Collection - Epic Tracks for Streamers</title>
+    <link href="https://aktunes.netlify.app/gaming-music.html"/>
+    <id>https://aktunes.netlify.app/gaming-music.html</id>
+    <updated>2025-10-11T08:30:00Z</updated>
+    <summary>High-energy gaming music perfect for Twitch streams, YouTube gaming content, and esports events. Copyright-free and optimized for content creators.</summary>
+    <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <h2>Gaming Music for Streamers</h2>
+        <p>Perfect for:</p>
+        <ul>
+          <li>Twitch and YouTube gaming streams</li>
+          <li>Esports tournament broadcasts</li>
+          <li>Gaming video backgrounds</li>
+          <li>Montage and highlight reels</li>
+        </ul>
+        <p>No copyright claims, monetization-safe worldwide.</p>
+      </div>
+    </content>
+    <category term="Gaming Music"/>
+    <category term="Streaming"/>
+  </entry>
+
+  <!-- YouTube Music Category -->
+  <entry>
+    <title>📺 YouTube Background Music - Monetization Safe</title>
+    <link href="https://aktunes.netlify.app/youtube-music.html"/>
+    <id>https://aktunes.netlify.app/youtube-music.html</id>
+    <updated>2025-10-11T08:00:00Z</updated>
+    <summary>YouTube-optimized background music collection. 100% monetization-safe with no copyright claims guaranteed for global content creators.</summary>
+    <content type="xhtml">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <h2>YouTube Background Music</h2>
+        <p>Our YouTube-optimized library includes:</p>
+        <ul>
+          <li>Upbeat tracks for vlogs and lifestyle content</li>
+          <li>Ambient music for tutorials and educational videos</li>
+          <li>Corporate music for business presentations</li>
+          <li>Motivational tracks for fitness content</li>
+        </ul>
+        <p>Pre-cleared for YouTube monetization worldwide!</p>
+      </div>
+    </content>
+    <category term="YouTube Music"/>
+    <category term="Background Music"/>
+  </entry>
+
+</feed>

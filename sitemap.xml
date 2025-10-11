@@ -191,10 +191,10 @@
     <mobile:mobile/>
   </url>
 
-  <!-- Dynamic Search URLs for SEO -->
+  <!-- Search URLs for Top 4 Search Engines -->
   <url>
     <loc>https://aktunes.netlify.app/#search=royalty-free-music</loc>
-    <lastmod>2025-01-15</lastmod>
+    <lastmod>2025-10-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
     <mobile:mobile/>
@@ -202,7 +202,7 @@
 
   <url>
     <loc>https://aktunes.netlify.app/#search=copyright-free-music</loc>
-    <lastmod>2025-01-15</lastmod>
+    <lastmod>2025-10-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
     <mobile:mobile/>
@@ -210,7 +210,7 @@
 
   <url>
     <loc>https://aktunes.netlify.app/#search=content-creator-music</loc>
-    <lastmod>2025-01-15</lastmod>
+    <lastmod>2025-10-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
     <mobile:mobile/>
@@ -218,7 +218,7 @@
 
   <url>
     <loc>https://aktunes.netlify.app/#search=background-music</loc>
-    <lastmod>2025-01-15</lastmod>
+    <lastmod>2025-10-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
     <mobile:mobile/>
@@ -226,7 +226,7 @@
 
   <url>
     <loc>https://aktunes.netlify.app/#search=streaming-music</loc>
-    <lastmod>2025-01-15</lastmod>
+    <lastmod>2025-10-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
     <mobile:mobile/>

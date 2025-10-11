@@ -46,6 +46,7 @@ Allow: /
 Sitemap: https://aktunes.netlify.app/sitemap.xml
 Sitemap: https://aktunes.netlify.app/public/sitemap.xml
 Sitemap: https://aktunes.netlify.app/feed.xml
+Sitemap: https://aktunes.netlify.app/atom.xml
 
 # Host directive
 Host: https://aktunes.netlify.app
