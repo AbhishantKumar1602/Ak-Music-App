@@ -1,46 +1,47 @@
 # Global SEO Redirects for AK Tunes
 # Optimized for Netlify deployment and international reach
 
-# Primary SPA routing
-/*    /index.html   200
-
-# SEO-friendly redirects for music categories
-/music/electronic    /electronic-music.html    301
-/music/gaming        /gaming-music.html        301
-/music/youtube       /youtube-music.html       301
-/electronic          /electronic-music.html    301
-/gaming              /gaming-music.html        301
-/youtube             /youtube-music.html       301
+# SEO-friendly redirects for music categories - Specifics first
+/music/electronic /electronic-music.html 301!
+/music/gaming /gaming-music.html 301!
+/music/youtube /youtube-music.html 301!
+/electronic /electronic-music.html 301!
+/gaming /gaming-music.html 301!
+/youtube /youtube-music.html 301!
 
 # Common search terms redirects
-/royalty-free        /index.html               301
-/copyright-free      /index.html               301
-/free-music          /index.html               301
-/background-music    /youtube-music.html       301
-/content-creator     /index.html               301
-/twitch-music        /gaming-music.html        301
-/stream-music        /gaming-music.html        301
-/edm                 /electronic-music.html    301
-/house-music         /electronic-music.html    301
+/royalty-free /index.html 301!
+/copyright-free /index.html 301!
+/free-music /index.html 301!
+/background-music /youtube-music.html 301!
+/content-creator /index.html 301!
+/twitch-music /gaming-music.html 301!
+/stream-music /gaming-music.html 301!
+/edm /electronic-music.html 301!
+/house-music /electronic-music.html 301!
 
 # Legacy URL redirects
-/home                /home.html                301
-/about               /about.html               301
-/contact             /contact.html             301
-/artists             /artists.html             301
+/home /home.html 301!
+/about /about.html 301!
+/contact /contact.html 301!
+/artists /artists.html 301!
 
-# Social media tracking redirects
-/fb                  /index.html               302
-/twitter             /index.html               302
-/instagram           /index.html               302
-/youtube-channel     /index.html               302
+# Social media tracking redirects (302 for temp, no SEO pass)
+/fb /index.html 302!
+/twitter /index.html 302!
+/instagram /index.html 302!
+/youtube-channel /index.html 302!
 
 # API and feed redirects
-/rss                 /feed.xml                 301
-/feed                /feed.xml                 301
-/sitemap             /sitemap.xml              301
+/rss /feed.xml 301!
+/feed /feed.xml 301!
+/sitemap /sitemap.xml 301!
 
 # Force HTTPS and www removal
 https://www.aktunes.netlify.app/*  https://aktunes.netlify.app/:splat  301!
 http://aktunes.netlify.app/*       https://aktunes.netlify.app/:splat  301!
 http://www.aktunes.netlify.app/*   https://aktunes.netlify.app/:splat  301!
+
+
+# Primary SPA routing - Catch-all LAST for client-side handling
+/* /index.html 200
