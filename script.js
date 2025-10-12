@@ -646,6 +646,20 @@ document.addEventListener("keydown", (e) => {
         return;
     }
 
+    // Handle Ctrl+S for search bar focus
+    if (e.ctrlKey && e.code === "KeyS") {
+        e.preventDefault();
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput) {
+            searchInput.focus();
+            searchInput.select(); // Select all text if any
+            showNotification('Search bar focused', 'info');
+        } else {
+            showNotification('Search bar not available on this page', 'warning');
+        }
+        return;
+    }
+
     switch(e.code) {
         case "Space":
             e.preventDefault();
@@ -688,6 +702,65 @@ document.addEventListener("keydown", (e) => {
             playSongByIndex(currentSongIndex);
             break;
 
+        case "KeyN":
+            e.preventDefault();
+            if (songs.length === 0) return;
+            currentSongIndex = getNextIndex();
+            playSongByIndex(currentSongIndex);
+            break;
+
+        case "KeyP":
+            e.preventDefault();
+            if (songs.length === 0) return;
+            currentSongIndex = getPreviousIndex();
+            playSongByIndex(currentSongIndex);
+            break;
+
+        case "KeyM":
+            e.preventDefault();
+            if (isMuted) {
+                audio.volume = previousVolume;
+                volumeSlider.value = previousVolume * 100;
+                isMuted = false;
+            } else {
+                previousVolume = audio.volume;
+                audio.volume = 0;
+                volumeSlider.value = 0;
+                isMuted = true;
+            }
+            updateVolumeIcon(audio.volume);
+            break;
+
+        case "KeyL":
+            e.preventDefault();
+            if (songs.length === 0) return;
+            const currentSong = songs[currentSongIndex];
+            if (currentSong) {
+                currentSong.isLiked = !currentSong.isLiked;
+                updateCurrentSongUI(currentSong);
+                saveLikedSongs();
+                showNotification(currentSong.isLiked ? 'Added to favorites' : 'Removed from favorites', currentSong.isLiked ? 'success' : 'info');
+                
+                // If we are in favorites view, refresh the list to show the change
+                if (isFavoritesViewActive) {
+                    setTimeout(() => {
+                        renderFavoriteSongs();
+                    }, 300);
+                }
+            }
+            break;
+
+        case "KeyD":
+            e.preventDefault();
+            if (songs.length === 0) return;
+            const downloadBtn = document.getElementById("downloadSong");
+            if (downloadBtn) {
+                downloadBtn.click();
+            } else {
+                showNotification('Download feature not available', 'warning');
+            }
+            break;
+
         case "KeyS":
             e.preventDefault();
             document.getElementById("shuffle").click();
@@ -697,6 +770,17 @@ document.addEventListener("keydown", (e) => {
             e.preventDefault();
             document.getElementById("repeat").click();
             break;
+
+        case "KeyF":
+            e.preventDefault();
+            const favBtn = document.getElementById("showFavoritesBtn");
+            if (favBtn) {
+                favBtn.click();
+            } else {
+                showNotification('Favorites feature not available on this page', 'warning');
+            }
+            break;
+
     }
 });
 

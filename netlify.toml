@@ -6,8 +6,8 @@
   command = "echo 'AK Tunes - Building for global deployment...'"
 
 [build.environment]
-  NODE_VERSION = "18"
-  NPM_VERSION = "9"
+  NODE_VERSION = "22"
+  NPM_VERSION = "10"
 
 [[headers]]
   for = "/*"
@@ -21,48 +21,77 @@
   for = "/*.css"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "text/css; charset=utf-8"
 
 [[headers]]
   for = "/*.js"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "application/javascript; charset=utf-8"
 
 [[headers]]
   for = "/*.mp3"
   [headers.values]
     Cache-Control = "public, max-age=2592000"
     Accept-Ranges = "bytes"
+    Content-Type = "audio/mpeg"
+
+[[headers]]
+  for = "/*.ogg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Accept-Ranges = "bytes"
+    Content-Type = "audio/ogg"
+
+[[headers]]
+  for = "/*.wav"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Accept-Ranges = "bytes"
+    Content-Type = "audio/wav"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "image/png"
 
 [[redirects]]
   from = "/music/electronic"
   to = "/electronic-music.html"
   status = 301
+  force = true
 
 [[redirects]]
   from = "/music/gaming"
   to = "/gaming-music.html"
   status = 301
+  force = true
 
 [[redirects]]
   from = "/music/youtube"
   to = "/youtube-music.html"
   status = 301
+  force = true
 
 [[redirects]]
   from = "/free-music"
   to = "/"
   status = 301
+  force = true
 
 [[redirects]]
   from = "/royalty-free"
   to = "/"
   status = 301
+  force = true
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
+  force = true
+  
 # Plugin configuration for optimization
 [[plugins]]
   package = "@netlify/plugin-sitemap"
