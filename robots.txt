@@ -11,12 +11,17 @@ Crawl-delay: 1
 # Google (Global #1 - 92% market share)
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 1
+Crawl-delay: 0.5
 
 User-agent: Googlebot-Image
 Allow: /covers/
 Allow: /ak.png
-Crawl-delay: 1
+Allow: /playing.gif
+Crawl-delay: 0.5
+
+User-agent: Googlebot-News
+Allow: /
+Crawl-delay: 0.5
 
 # Bing/Microsoft (Global #2 - 3% market share)
 User-agent: Bingbot

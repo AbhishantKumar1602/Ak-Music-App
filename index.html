@@ -150,6 +150,30 @@
     <!-- IndexNow for Instant Indexing -->
     <meta name="indexnow" content="a8f5f167f44f4964e6c998dee827110c">
     
+    <!-- Google Indexing Hints -->
+    <meta name="google" content="index,follow,snippet,archive">
+    <meta name="googlebot" content="index,follow,snippet,archive,max-snippet:-1,max-image-preview:large,max-video-preview:-1">
+    <meta name="google-site-verification" content="V7zJLglGstwZoXQqanl310q-em3ToWPmnbOVBQeLVf0">
+    
+    <!-- Structured Data for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "AK Tunes",
+      "url": "https://aktunes.netlify.app",
+      "description": "Free royalty-free music downloads for content creators worldwide",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://aktunes.netlify.app/?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
   <!-- EmailJS SDK -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="application/ld+json">

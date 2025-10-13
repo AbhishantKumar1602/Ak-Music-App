@@ -9,8 +9,8 @@
     <!-- Main Homepage -->
   <url>
     <loc>https://aktunes.netlify.app/</loc>
-    <lastmod>2025-10-11</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>hourly</changefreq>
     <priority>1.0</priority>
     <mobile:mobile/>
     <image:image>
@@ -18,6 +18,14 @@
       <image:caption>AK Tunes - Free Music Download Platform for Global Content Creators</image:caption>
       <image:title>Free Royalty-Free Music Downloads</image:title>
     </image:image>
+    <news:news>
+      <news:publication>
+        <news:name>AK Tunes Music Platform</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2025-10-13T00:00:00+00:00</news:publication_date>
+      <news:title>AK Tunes - Free Royalty-Free Music Downloads Launch</news:title>
+    </news:news>
   </url>
 
   <!-- Core Pages -->
