@@ -33,7 +33,7 @@ Write-Host ""
 
 Write-Host "4. Direct Google Submission:"
 Write-Host "   • https://search.google.com/search-console/"
-Write-Host "   • URL Inspection → Request Indexing for each URL"
+Write-Host "   • URL Inspection - Request Indexing for each URL"
 Write-Host ""
 
 Write-Host "🚀 Automated Submissions:" -ForegroundColor Green
