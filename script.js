@@ -483,101 +483,86 @@ async function searchSongsOnline(query) {
     try {
         showLoading();
         let allSongs = [];
-        const maxPages = 10; // Fetch 10 pages for more variety
-        const limit = 40; // API limit per page
-        
-        // First, get the first page to check total available
-        const firstRes = await fetch(
-            `https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=${limit}`
-        );
-        
-        if (!firstRes.ok) {
-            throw new Error(`HTTP error! status: ${firstRes.status}`);
-        }
-        
+        const maxPages = 10; // Max pages to fetch in background
+        const initialPages = 2; // Show 1 or 2 pages first
+        const limit = 40;
+
+        // Fetch first page
+        const firstRes = await fetch(`https://saavn.sumit.co/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=${limit}`);
+        if (!firstRes.ok) throw new Error(`HTTP error! status: ${firstRes.status}`);
         const firstData = await firstRes.json();
-        
-        if (!firstData.data.results || firstData.data.results.length === 0) {
-            throw new Error("No songs found");
-        }
-        
-        // Add first page results
+        if (!firstData.data.results || firstData.data.results.length === 0) throw new Error("No songs found");
+
         let firstPageSongs = firstData.data.results.map(song => ({
             name: song.name || 'Unknown Song',
             artist: song.artists?.primary?.[0]?.name || 'Unknown Artist',
-            filePath: song.downloadUrl?.length ?
-                song.downloadUrl[song.downloadUrl.length - 1].url :
-                "",
-            coverPath: song.image?.length ?
-                song.image[song.image.length - 1].url :
-                "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
-        }));
-        
-        // Filter valid songs from first page
-        firstPageSongs = firstPageSongs.filter(song => song.filePath);
+            filePath: song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "",
+            coverPath: song.image?.length ? song.image[song.image.length - 1].url : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
+        })).filter(song => song.filePath);
+
         allSongs = allSongs.concat(firstPageSongs);
-        
-        // Calculate how many more pages we can fetch
+
+        // Render first page immediately
+        songs = [...allSongs];
+        lastSearchedSongs = [...songs];
+        renderSongs(songs);
+        hideLoading();
+
+        // Fetch second page (if available) and render
         const totalSongs = firstData.data.total || 1800;
         const totalPages = Math.min(Math.ceil(totalSongs / limit), maxPages);
-        
-        // Create promises for remaining pages (2 to totalPages)
-        const pagePromises = [];
-        for (let page = 2; page <= totalPages; page++) {
-            const promise = fetch(
-                `https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`
-            ).then(async res => {
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.data.results && data.data.results.length > 0) {
-                        return data.data.results.map(song => ({
+        if (totalPages >= 2) {
+            fetch(`https://saavn.sumit.co/api/search/songs?query=${encodeURIComponent(query)}&page=2&limit=${limit}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && data.data.results && data.data.results.length > 0) {
+                        const secondPageSongs = data.data.results.map(song => ({
                             name: song.name || 'Unknown Song',
                             artist: song.artists?.primary?.[0]?.name || 'Unknown Artist',
-                            filePath: song.downloadUrl?.length ?
-                                song.downloadUrl[song.downloadUrl.length - 1].url :
-                                "",
-                            coverPath: song.image?.length ?
-                                song.image[song.image.length - 1].url :
-                                "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
+                            filePath: song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "",
+                            coverPath: song.image?.length ? song.image[song.image.length - 1].url : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
                         })).filter(song => song.filePath);
+                        // Append to list and render new songs
+                        allSongs = allSongs.concat(secondPageSongs);
+                        songs = [...allSongs];
+                        lastSearchedSongs = [...songs];
+                        // Dynamically import appendSongsToList if not already present
+                        if (typeof appendSongsToList === 'function') {
+                            appendSongsToList(secondPageSongs);
+                        } else {
+                            import('./appendSongsToList.js').then(mod => {
+                                mod.appendSongsToList(secondPageSongs);
+                            });
+                        }
                     }
-                }
-                return [];
-            }).catch(() => []);
-            
-            pagePromises.push(promise);
+                });
         }
-        
-        // Wait for all additional pages
-        const additionalResults = await Promise.all(pagePromises);
-        
-        // Combine all results
-        additionalResults.forEach(pageResults => {
-            if (pageResults && pageResults.length > 0) {
-                allSongs = allSongs.concat(pageResults);
-            }
-        });
-        
-        // Apply liked status from localStorage
-        const likedSongsSet = loadLikedSongs();
-        allSongs.forEach(song => {
-            if (likedSongsSet.has(song.filePath)) {
-                song.isLiked = true;
-            }
-        });
 
-        if (allSongs.length === 0) {
-            throw new Error("No playable songs found");
+        // Fetch remaining pages in background and append as they arrive
+        for (let page = 3; page <= totalPages; page++) {
+            fetch(`https://saavn.sumit.co/api/search/songs?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && data.data.results && data.data.results.length > 0) {
+                        const moreSongs = data.data.results.map(song => ({
+                            name: song.name || 'Unknown Song',
+                            artist: song.artists?.primary?.[0]?.name || 'Unknown Artist',
+                            filePath: song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "",
+                            coverPath: song.image?.length ? song.image[song.image.length - 1].url : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
+                        })).filter(song => song.filePath);
+                        allSongs = allSongs.concat(moreSongs);
+                        songs = [...allSongs];
+                        lastSearchedSongs = [...songs];
+                        if (typeof appendSongsToList === 'function') {
+                            appendSongsToList(moreSongs);
+                        } else {
+                            import('./appendSongsToList.js').then(mod => {
+                                mod.appendSongsToList(moreSongs);
+                            });
+                        }
+                    }
+                });
         }
-        
-        const shuffledSongs = allSongs.sort(() => Math.random() - 0.5);
-        
-        
-        // Limit to 300 songs max for better performance
-        songs = shuffledSongs.slice(0, 300);
-        lastSearchedSongs = [...songs]; // Store a copy of the search results
-        
-        renderSongs(songs);
 
         // Reset favorites view if a new search is successful
         isFavoritesViewActive = false;
@@ -1193,7 +1178,7 @@ async function fetchAndShowSuggestions(query) {
     }
 
     try {
-        const res = await fetch(`https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=10`);
+        const res = await fetch(`https://saavn.sumit.co/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=10`);
         if (!res.ok) throw new Error('Suggestion API failed');
         
         const data = await res.json();
@@ -1402,7 +1387,7 @@ function initContactPage() {
             console.log('Sending email with data:', formData); // Debug log
             
             // Send email to admin
-            emailjs.send("service_3fsrn7p", "template_admin", {
+            emailjs.send("service_3fsrn7p", "template_jebkbnq", {
                 from_name: formData.name,
                 from_email: formData.email,
                 subject: formData.subject,
@@ -1413,7 +1398,7 @@ function initContactPage() {
             .then(() => {
                 console.log('Admin email sent successfully'); // Debug log
                 // Send auto-reply to user
-                return emailjs.send("service_3fsrn7p", "template_auto_reply", {
+                return emailjs.send("service_3fsrn7p", "template_fh8brzc", {
                     to_name: formData.name,
                     to_email: formData.email,
                     subject: "Thank you for contacting AK Music App",
@@ -1458,7 +1443,7 @@ async function fetchArtistSongsUnlimited(artistId, artistName) {
 
         // Fetch songs page by page
         for (let page = 1; page <= maxPages; page++) {
-            const res = await fetch(`https://saavn.dev/api/artists/${artistId}/songs?page=${page}&limit=${limit}`);
+            const res = await fetch(`https://saavn.sumit.co/api/artists/${artistId}/songs?page=${page}&limit=${limit}`);
             if (!res.ok) throw new Error(`Failed to fetch artist songs, page ${page}`);
 
             const data = await res.json();
@@ -1582,7 +1567,7 @@ function renderArtistCard(artist) {
             let hasMore = true;
             
             while (hasMore) {
-                const res = await fetch(`https://saavn.dev/api/artists/${artist.id}/songs?page=${page}&limit=50`);
+                const res = await fetch(`https://saavn.sumit.co/api/artists/${artist.id}/songs?page=${page}&limit=50`);
                 if (!res.ok) throw new Error('Failed to fetch artist songs');
                 const data = await res.json();
                 
@@ -1655,7 +1640,7 @@ const searchArtists = async (query, isInitial = false) => {
     }
 
     try {
-        const res = await fetch(`https://saavn.dev/api/search/artists?query=${encodeURIComponent(query)}&page=100&limit=100`);
+        const res = await fetch(`https://saavn.sumit.co/api/search/artists?query=${encodeURIComponent(query)}&page=100&limit=100`);
         if (!res.ok) throw new Error('Artist search failed');
         const data = await res.json();
         console.log('Artist search response:', data); // Debug log
