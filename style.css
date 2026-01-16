@@ -1,4 +1,9 @@
 
+
+#pageContent {
+    padding-bottom: 12rem;
+}
+
 /* Main content: single source of truth */
 .main-content {
     flex: 1;
@@ -538,7 +543,7 @@ nav a.active::after {
     backdrop-filter: blur(30px);
     border-top: 1px solid var(--border-color);
     padding: 0.75rem 1rem 1rem;
-    z-index: 200;
+    z-index: 1000;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
 }
 

@@ -556,6 +556,7 @@
           .then(res => res.text())
           .then(html => {
             content.innerHTML = html;
+            window.scrollTo(0, 0);
             if (push) history.pushState({ page }, "", page);
             links.forEach(l => l.classList.remove("active"));
             const active = [...links].find(l => l.dataset.page === page);
