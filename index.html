@@ -74,27 +74,12 @@
     <meta name="dc.coverage" content="Global">
     
     <!-- SEO Hidden Headers for Search Engines -->
-    <h1 style="display: none;" class="sr-only">AK Tunes - World's Leading Free Royalty-Free Music Download Platform for Global Content Creators</h1>
-    <h2 style="display: none;" class="sr-only">Download High-Quality No Copyright MP3 Songs for YouTube, Podcasts, Gaming, Streaming & Commercial Use Worldwide</h2>
-    <h3 style="display: none;" class="sr-only">50,000+ Creators Trust AK Tunes for Copyright-Safe Music Downloads</h3>
+    <h1 class="sr-only">AK Tunes - World's Leading Free Royalty-Free Music Download Platform for Global Content Creators</h1>
+    <h2 class="sr-only">Download High-Quality No Copyright MP3 Songs for YouTube, Podcasts, Gaming, Streaming & Commercial Use Worldwide</h2>
+    <h3 class="sr-only">50,000+ Creators Trust AK Tunes for Copyright-Safe Music Downloads</h3>
     <!-- Global Language Alternatives & Canonicals -->
     <link rel="canonical" href="https://aktunes.netlify.app/">
     <link rel="alternate" hreflang="en" href="https://aktunes.netlify.app/">
-    <link rel="alternate" hreflang="en-us" href="https://aktunes.netlify.app/en-us/">
-    <link rel="alternate" hreflang="en-gb" href="https://aktunes.netlify.app/en-gb/">
-    <link rel="alternate" hreflang="en-ca" href="https://aktunes.netlify.app/en-ca/">
-    <link rel="alternate" hreflang="en-au" href="https://aktunes.netlify.app/en-au/">
-    <link rel="alternate" hreflang="es" href="https://aktunes.netlify.app/es/">
-    <link rel="alternate" hreflang="fr" href="https://aktunes.netlify.app/fr/">
-    <link rel="alternate" hreflang="de" href="https://aktunes.netlify.app/de/">
-    <link rel="alternate" hreflang="pt" href="https://aktunes.netlify.app/pt/">
-    <link rel="alternate" hreflang="it" href="https://aktunes.netlify.app/it/">
-    <link rel="alternate" hreflang="ja" href="https://aktunes.netlify.app/ja/">
-    <link rel="alternate" hreflang="ko" href="https://aktunes.netlify.app/ko/">
-    <link rel="alternate" hreflang="zh" href="https://aktunes.netlify.app/zh/">
-    <link rel="alternate" hreflang="hi" href="https://aktunes.netlify.app/hi/">
-    <link rel="alternate" hreflang="ar" href="https://aktunes.netlify.app/ar/">
-    <link rel="alternate" hreflang="ru" href="https://aktunes.netlify.app/ru/">
     <link rel="alternate" hreflang="x-default" href="https://aktunes.netlify.app/">
     
     <!-- RSS & Atom Feeds for Content Discovery -->
@@ -141,6 +126,19 @@
     <link rel="apple-touch-startup-image" href="/apple-launch-750x1294.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
     <link rel="apple-touch-startup-image" href="/apple-launch-1242x2148.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
     
+    <style>
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
+    </style>
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="style.css" />
     
@@ -262,30 +260,7 @@
                             }
                         }
                     ],
-                    "mainEntity": {
-                        "@type": "ItemList",
-                        "name": "Music Categories",
-                        "itemListElement": [
-                            {
-                                "@type": "ListItem",
-                                "position": 1,
-                                "url": "https://aktunes.netlify.app/electronic-music.html",
-                                "name": "Electronic Music"
-                            },
-                            {
-                                "@type": "ListItem",
-                                "position": 2,
-                                "url": "https://aktunes.netlify.app/gaming-music.html",
-                                "name": "Gaming Music"
-                            },
-                            {
-                                "@type": "ListItem",
-                                "position": 3,
-                                "url": "https://aktunes.netlify.app/youtube-music.html",
-                                "name": "YouTube Music"
-                            }
-                        ]
-                    }
+
                 },
                 {
                     "@type": "WebApplication",
@@ -459,14 +434,7 @@
 
       <div class="nav-links" id="navLinks">
         <li><a href="home.html" class="nav-link active" data-page="home.html">Home</a></li>
-        <li class="nav-dropdown">
-          <a href="#" class="dropdown-toggle" data-dropdown="true">Music <i class="fas fa-chevron-down"></i></a>
-          <div class="nav-dropdown-menu">
-            <a href="electronic-music.html" class="nav-link" data-page="electronic-music.html">Electronic Music</a>
-            <a href="gaming-music.html" class="nav-link" data-page="gaming-music.html">Gaming Music</a>
-            <a href="youtube-music.html" class="nav-link" data-page="youtube-music.html">YouTube Music</a>
-          </div>
-        </li>
+
         <li><a href="artists.html" class="nav-link" data-page="artists.html">Artists</a></li>
         <li><a href="about.html" class="nav-link" data-page="about.html">About</a></li>
         <li><a href="contact.html" class="nav-link" data-page="contact.html">Contact</a></li>

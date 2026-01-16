@@ -57,24 +57,6 @@
     Content-Type = "image/png"
 
 [[redirects]]
-  from = "/music/electronic"
-  to = "/electronic-music.html"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/music/gaming"
-  to = "/gaming-music.html"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/music/youtube"
-  to = "/youtube-music.html"
-  status = 301
-  force = true
-
-[[redirects]]
   from = "/free-music"
   to = "/"
   status = 301

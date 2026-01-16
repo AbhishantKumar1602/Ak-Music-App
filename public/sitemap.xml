@@ -45,29 +45,4 @@
     <mobile:mobile/>
   </url>
 
-  <!-- High-Priority Music Pages -->
-  <url>
-    <loc>https://aktunes.netlify.app/electronic-music.html</loc>
-    <lastmod>2025-10-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <mobile:mobile/>
-  </url>
-
-  <url>
-    <loc>https://aktunes.netlify.app/gaming-music.html</loc>
-    <lastmod>2025-10-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <mobile:mobile/>
-  </url>
-
-  <url>
-    <loc>https://aktunes.netlify.app/youtube-music.html</loc>
-    <lastmod>2025-10-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <mobile:mobile/>
-  </url>
-
 </urlset>

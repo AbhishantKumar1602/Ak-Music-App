@@ -52,60 +52,7 @@
       "label": "AK Tunes Mobile Music Player"
     }
   ],
-  "shortcuts": [
-    {
-      "name": "Electronic Music",
-      "short_name": "Electronic",
-      "description": "Browse electronic music collection",
-      "url": "/electronic-music.html",
-      "icons": [
-        {
-          "src": "/icons/electronic-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Gaming Music",
-      "short_name": "Gaming",
-      "description": "Browse gaming music collection",
-      "url": "/gaming-music.html",
-      "icons": [
-        {
-          "src": "/icons/gaming-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "YouTube Music",
-      "short_name": "YouTube",
-      "description": "Browse YouTube background music",
-      "url": "/youtube-music.html",
-      "icons": [
-        {
-          "src": "/icons/youtube-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Search Music",
-      "short_name": "Search",
-      "description": "Search for music tracks",
-      "url": "/?search=true",
-      "icons": [
-        {
-          "src": "/icons/search-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    }
-  ],
+
   "related_applications": [
     {
       "platform": "web",

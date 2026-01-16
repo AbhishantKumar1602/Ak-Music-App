@@ -1,0 +1,12 @@
+[
+    { "name": "Legions - Mortals", "artist": "Mortals", "filePath": "songs/1.mp3", "coverPath": "covers/1.jpg" },
+    { "name": "Trap Cartel - Huma-Huma", "artist": "Trap Cartel", "filePath": "songs/2.mp3", "coverPath": "covers/2.jpg" },
+    { "name": "They MAD - Alan Walker", "artist": "Alan Walker", "filePath": "songs/3.mp3", "coverPath": "covers/3.jpg" },
+    { "name": "Rich THE Kid - Alan Walker", "artist": "Alan Walker", "filePath": "songs/4.mp3", "coverPath": "covers/4.jpg" },
+    { "name": "Alone - Marshmello", "artist": "Marshmello", "filePath": "songs/5.mp3", "coverPath": "covers/5.jpg" },
+    { "name": "Safety Dance - Marshmello", "artist": "Marshmello", "filePath": "songs/6.mp3", "coverPath": "covers/6.jpg" },
+    { "name": "Back It Up - OneRepublic", "artist": "OneRepublic", "filePath": "songs/7.mp3", "coverPath": "covers/7.jpg" },
+    { "name": "BeAware - OneRepublic", "artist": "OneRepublic", "filePath": "songs/8.mp3", "coverPath": "covers/8.jpg" },
+    { "name": "Beast - OneRepublic", "artist": "OneRepublic", "filePath": "songs/9.mp3", "coverPath": "covers/9.jpg" },
+    { "name": "Tryhard - OneRepublic", "artist": "OneRepublic", "filePath": "songs/10.mp3", "coverPath": "covers/10.jpg" }
+]

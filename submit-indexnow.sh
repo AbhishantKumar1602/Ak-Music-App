@@ -12,9 +12,6 @@ URLS=(
     "https://aktunes.netlify.app/about.html"
     "https://aktunes.netlify.app/contact.html"
     "https://aktunes.netlify.app/artists.html"
-    "https://aktunes.netlify.app/electronic-music.html"
-    "https://aktunes.netlify.app/gaming-music.html"
-    "https://aktunes.netlify.app/youtube-music.html"
 )
 
 echo "🚀 Submitting URLs to search engines..."

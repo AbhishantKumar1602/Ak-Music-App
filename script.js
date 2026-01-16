@@ -23,6 +23,7 @@ const likeBtn = document.getElementById("likeSong");
 const volumeSlider = document.getElementById("volumeSlider");
 const volumeBtn = document.getElementById("volumeBtn");
 
+const API_BASE_URL = 'https://saavn.sumit.co/api';
 
 let audio = new Audio();
 let currentSongIndex = 0;
@@ -34,20 +35,22 @@ let isRepeating = false;
 let isMuted = false;
 let isFavoritesViewActive = false;
 let previousVolume = 1;
+let initialSongs = [];
+let apiSongsLoaded = false;
 
-// Local songs
-const localSongs = [
-    { name: "Legions - Mortals", artist: "Mortals", filePath: "songs/1.mp3", coverPath: "covers/1.jpg" },
-    { name: "Trap Cartel - Huma-Huma", artist: "Trap Cartel", filePath: "songs/2.mp3", coverPath: "covers/2.jpg" },
-    { name: "They MAD - Alan Walker", artist: "Alan Walker", filePath: "songs/3.mp3", coverPath: "covers/3.jpg" },
-    { name: "Rich THE Kid - Alan Walker", artist: "Alan Walker", filePath: "songs/4.mp3", coverPath: "covers/4.jpg" },
-    { name: "Alone - Marshmello", artist: "Marshmello", filePath: "songs/5.mp3", coverPath: "covers/5.jpg" },
-    { name: "Safety Dance - Marshmello", artist: "Marshmello", filePath: "songs/6.mp3", coverPath: "covers/6.jpg" },
-    { name: "Back It Up - OneRepublic", artist: "OneRepublic", filePath: "songs/7.mp3", coverPath: "covers/7.jpg" },
-    { name: "BeAware - OneRepublic", artist: "OneRepublic", filePath: "songs/8.mp3", coverPath: "covers/8.jpg" },
-    { name: "Beast - OneRepublic", artist: "OneRepublic", filePath: "songs/9.mp3", coverPath: "covers/9.jpg" },
-    { name: "Tryhard - OneRepublic", artist: "OneRepublic", filePath: "songs/10.mp3", coverPath: "covers/10.jpg" },
-];
+// Function to load local songs from JSON file
+async function loadLocalSongs() {
+    try {
+        const response = await fetch('songs.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Could not load local songs:', error);
+        return []; // Return an empty array as a fallback
+    }
+}
 
 // Utility Functions
 function formatTime(sec) {
@@ -109,7 +112,7 @@ function resetSongItemIcons() {
 
 // Enhanced song rendering with improved UI
 function renderSongs(songArray) {
-    const songList = document.getElementById("songList") || document.getElementById("genreSongList");
+    const songList = document.getElementById("songList");
     if (!songList) {
         console.error("Song list container not found! Cannot render songs.");
         return;
@@ -129,7 +132,7 @@ function renderSongs(songArray) {
         const songNameHTML = song.name.length > 25 ? `<marquee direction="left" scrollamount="3">${song.name}</marquee>` : song.name;
         const songItem = document.createElement("div");
         songItem.className = "songItem fade-in";
-        songItem.dataset.index = index;
+        songItem.dataset.songId = song.filePath; // Use filePath as a unique ID
         songItem.style.animationDelay = `${index * 0.1}s`;
         
         songItem.innerHTML = `
@@ -138,7 +141,7 @@ function renderSongs(songArray) {
                 <div class="song-name">${songNameHTML}</div>
                 <div class="song-artist">${song.artist}</div>
             </div>
-            <i class="fas fa-play-circle songPlay" data-index="${index}"></i>
+            <i class="fas fa-play-circle songPlay" data-song-id="${song.filePath}"></i>
         `;
         songList.appendChild(songItem);
     });
@@ -152,21 +155,27 @@ function addSongItemClickHandlers() {
     document.querySelectorAll(".songItem").forEach(item => {
         item.addEventListener("click", (e) => {
             if (e.target.closest('.songPlay')) return; // Don't trigger when clicking play button
-            playSongByIndex(parseInt(item.dataset.index));
+            playSongById(item.dataset.songId);
         });
     });
 
     document.querySelectorAll(".songPlay").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
-            playSongByIndex(parseInt(btn.dataset.index));
+            playSongById(btn.dataset.songId);
         });
     });
 }
 
 
 // Enhanced play function with better visual feedback
-function playSongByIndex(index) {
+function playSongById(songId) {
+    const index = songs.findIndex(s => s.filePath === songId);
+    if (index === -1) {
+        console.error(`Song with ID "${songId}" not found.`);
+        return;
+    }
+
     if (index < 0 || index >= songs.length) return;
     
     currentSongIndex = index;
@@ -178,12 +187,16 @@ function playSongByIndex(index) {
     updateCurrentSongUI(song);
     
     audio.play().catch(error => {
+        // Ignore AbortError which happens when the user quickly changes songs.
+        if (error.name === 'AbortError') {
+            return;
+        }
         console.error('Error playing audio:', error);
         showNotification('Error playing this song', 'error');
     });
 
     // Update play icon for the current song
-    const activeIcon = document.querySelector(`.songPlay[data-index="${index}"]`);
+    const activeIcon = document.querySelector(`.songPlay[data-song-id="${song.filePath}"]`);
     if (activeIcon) {
         activeIcon.classList.remove("fa-play-circle");
         activeIcon.classList.add("fa-pause-circle");
@@ -194,7 +207,7 @@ function playSongByIndex(index) {
         item.classList.remove('active');
     });
     
-    const currentSongItem = document.querySelector(`.songItem[data-index="${index}"]`);
+    const currentSongItem = document.querySelector(`.songItem[data-song-id="${song.filePath}"]`);
     if (currentSongItem) {
         currentSongItem.classList.add('active');
     }
@@ -312,7 +325,7 @@ function renderFavoriteSongs() {
             const displayName = song.name
             const songItem = document.createElement("div");
             songItem.className = "songItem fade-in";
-            songItem.dataset.index = index; // Use the original index
+            songItem.dataset.songId = song.filePath; // Use the song's filepath as the ID
             songItem.style.animationDelay = `${animationIndex * 0.1}s`;
 
             songItem.innerHTML = `
@@ -321,7 +334,7 @@ function renderFavoriteSongs() {
                     <div class="song-name">${displayName}</div>
                     <div class="song-artist">${song.artist}</div>
                 </div>
-                <i class="fas fa-play-circle songPlay" data-index="${index}"></i>
+                <i class="fas fa-play-circle songPlay" data-song-id="${song.filePath}"></i>
             `;
             songList.appendChild(songItem);
             animationIndex++;
@@ -333,12 +346,12 @@ function renderFavoriteSongs() {
 
     // If a song is currently playing and it's a favorite, update its UI
     if (!audio.paused) {
-        const activeIcon = document.querySelector(`.songPlay[data-index="${currentSongIndex}"]`);
+        const activeIcon = document.querySelector(`.songPlay[data-song-id="${songs[currentSongIndex].filePath}"]`);
         if (activeIcon) {
             activeIcon.classList.remove("fa-play-circle");
             activeIcon.classList.add("fa-pause-circle");
         }
-        const currentSongItem = document.querySelector(`.songItem[data-index="${currentSongIndex}"]`);
+        const currentSongItem = document.querySelector(`.songItem[data-song-id="${songs[currentSongIndex].filePath}"]`);
         if (currentSongItem) {
             currentSongItem.classList.add('active');
         }
@@ -381,7 +394,7 @@ masterPlay.addEventListener("click", () => {
     }
     
     if (!audio.src) {
-        playSongByIndex(currentSongIndex);
+        playSongById(songs[currentSongIndex].filePath);
         return;
     }
 
@@ -404,7 +417,7 @@ audio.addEventListener("pause", () => {
     masterPlayIcon.classList.add("fa-play-circle");
     playingGif.style.opacity = 0;
 
-    const activeIcon = document.querySelector(`.songPlay[data-index="${currentSongIndex}"]`);
+    const activeIcon = document.querySelector(`.songPlay[data-song-id="${songs[currentSongIndex].filePath}"]`);
     if (activeIcon) {
         activeIcon.classList.remove("fa-pause-circle");
         activeIcon.classList.add("fa-play-circle");
@@ -418,7 +431,7 @@ audio.addEventListener("play", () => {
     playingGif.style.opacity = 1;
 
     resetSongItemIcons();
-    const activeIcon = document.querySelector(`.songPlay[data-index="${currentSongIndex}"]`);
+    const activeIcon = document.querySelector(`.songPlay[data-song-id="${songs[currentSongIndex].filePath}"]`);
     if (activeIcon) {
         activeIcon.classList.remove("fa-play-circle");
         activeIcon.classList.add("fa-pause-circle");
@@ -488,7 +501,7 @@ async function searchSongsOnline(query) {
         const limit = 40;
 
         // Fetch first page
-        const firstRes = await fetch(`https://saavn.sumit.co/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=${limit}`);
+        const firstRes = await fetch(`${API_BASE_URL}/search/songs?query=${encodeURIComponent(query)}&page=1&limit=${limit}`);
         if (!firstRes.ok) throw new Error(`HTTP error! status: ${firstRes.status}`);
         const firstData = await firstRes.json();
         if (!firstData.data.results || firstData.data.results.length === 0) throw new Error("No songs found");
@@ -502,18 +515,22 @@ async function searchSongsOnline(query) {
 
         allSongs = allSongs.concat(firstPageSongs);
 
-        // Render first page immediately
+        // Shuffle the songs so order is different every load
         const shuffledSongs = [...allSongs].sort(() => Math.random() - 0.5);
         songs = shuffledSongs;
         lastSearchedSongs = [...shuffledSongs];
+        if (initialSongs.length === 0) {
+            initialSongs = [...shuffledSongs];
+        }
         renderSongs(songs);
         hideLoading();
+        apiSongsLoaded = true; // Mark that API songs have been loaded
 
         // Fetch second page (if available) and render
         const totalSongs = firstData.data.total || 1800;
         const totalPages = Math.min(Math.ceil(totalSongs / limit), maxPages);
         if (totalPages >= 2) {
-            fetch(`https://saavn.sumit.co/api/search/songs?query=${encodeURIComponent(query)}&page=2&limit=${limit}`)
+            fetch(`${API_BASE_URL}/search/songs?query=${encodeURIComponent(query)}&page=2&limit=${limit}`)
                 .then(res => res.ok ? res.json() : null)
                 .then(data => {
                     if (data && data.data.results && data.data.results.length > 0) {
@@ -525,24 +542,18 @@ async function searchSongsOnline(query) {
                         })).filter(song => song.filePath);
                         // Append to list and render new songs
                         allSongs = allSongs.concat(secondPageSongs);
+                        // Shuffle after adding new songs
                         const shuffledSongs = [...allSongs].sort(() => Math.random() - 0.5);
                         songs = shuffledSongs;
                         lastSearchedSongs = [...shuffledSongs];
-                        // Dynamically import appendSongsToList if not already present
-                        if (typeof appendSongsToList === 'function') {
-                            appendSongsToList(secondPageSongs);
-                        } else {
-                            import('./appendSongsToList.js').then(mod => {
-                                mod.appendSongsToList(secondPageSongs);
-                            });
-                        }
+                        appendSongsToList(secondPageSongs);
                     }
                 });
         }
 
         // Fetch remaining pages in background and append as they arrive
         for (let page = 3; page <= totalPages; page++) {
-            fetch(`https://saavn.sumit.co/api/search/songs?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`)
+            fetch(`${API_BASE_URL}/search/songs?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`)
                 .then(res => res.ok ? res.json() : null)
                 .then(data => {
                     if (data && data.data.results && data.data.results.length > 0) {
@@ -553,16 +564,11 @@ async function searchSongsOnline(query) {
                             coverPath: song.image?.length ? song.image[song.image.length - 1].url : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
                         })).filter(song => song.filePath);
                         allSongs = allSongs.concat(moreSongs);
+                        // Shuffle after adding new songs
                         const shuffledSongs = [...allSongs].sort(() => Math.random() - 0.5);
                         songs = shuffledSongs;
                         lastSearchedSongs = [...shuffledSongs];
-                        if (typeof appendSongsToList === 'function') {
-                            appendSongsToList(moreSongs);
-                        } else {
-                            import('./appendSongsToList.js').then(mod => {
-                                mod.appendSongsToList(moreSongs);
-                            });
-                        }
+                        appendSongsToList(moreSongs);
                     }
                 });
         }
@@ -579,14 +585,36 @@ async function searchSongsOnline(query) {
 
     } catch (err) {
         console.warn("API failed, using fallback songs.", err);
-        // songs = localSongs;
-        const shuffledLocalSongs = [...localSongs].sort(() => Math.random() - 0.5);
-        songs = shuffledLocalSongs;
-        lastSearchedSongs = [...shuffledLocalSongs];
+        // initialSongs should already be loaded and shuffled from initApp
+        songs = [...initialSongs];
+        lastSearchedSongs = [...initialSongs];
         renderSongs(songs);
         showNotification('Using offline songs', 'warning');
         hideLoading();
     }
+}
+
+// Append new songs to the song list in the UI
+function appendSongsToList(newSongs) {
+    const songList = document.getElementById("songList");
+    if (!songList || !Array.isArray(newSongs) || newSongs.length === 0) return;
+    newSongs.forEach((song, index) => {
+        const songNameHTML = song.name.length > 25 ? `<marquee direction="left" scrollamount="3">${song.name}</marquee>` : song.name;
+        const songItem = document.createElement("div");
+        songItem.className = "songItem fade-in";
+        songItem.dataset.songId = song.filePath;
+        songItem.style.animationDelay = `0s`;
+        songItem.innerHTML = `
+            <img src="${song.coverPath}" alt="Free royalty-free music download - AK Tunes" onerror="this.src='https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵'" />
+            <div class="song-info">
+                <div class="song-name">${songNameHTML}</div>
+                <div class="song-artist">${song.artist}</div>
+            </div>
+            <i class="fas fa-play-circle songPlay" data-song-id="${song.filePath}"></i>
+        `;
+        songList.appendChild(songItem);
+    });
+    addSongItemClickHandlers();
 }
 
 // Enhanced navigation with shuffle support
@@ -608,14 +636,14 @@ function getPreviousIndex() {
 document.getElementById("previous").addEventListener("click", () => {
     if (songs.length === 0) return;
     currentSongIndex = getPreviousIndex();
-    playSongByIndex(currentSongIndex);
+    playSongById(songs[currentSongIndex].filePath);
 });
 
 // Next button
 document.getElementById("next").addEventListener("click", () => {
     if (songs.length === 0) return;
     currentSongIndex = getNextIndex();
-    playSongByIndex(currentSongIndex);
+    playSongById(songs[currentSongIndex].filePath);
 });
 
 // Enhanced auto-play with repeat functionality
@@ -623,10 +651,10 @@ audio.addEventListener("ended", () => {
     if (songs.length === 0) return;
     
     if (isRepeating) {
-        playSongByIndex(currentSongIndex);
+        playSongById(songs[currentSongIndex].filePath);
     } else {
         currentSongIndex = getNextIndex();
-        playSongByIndex(currentSongIndex);
+        playSongById(songs[currentSongIndex].filePath);
     }
 });
 
@@ -636,26 +664,12 @@ document.addEventListener("keydown", (e) => {
         return;
     }
 
-    // Handle Ctrl+S for search bar focus
-    if (e.ctrlKey && e.code === "KeyS") {
-        e.preventDefault();
-        const searchInput = document.getElementById("searchInput");
-        if (searchInput) {
-            searchInput.focus();
-            searchInput.select(); // Select all text if any
-            showNotification('Search bar focused', 'info');
-        } else {
-            showNotification('Search bar not available on this page', 'warning');
-        }
-        return;
-    }
-
     switch(e.code) {
         case "Space":
             e.preventDefault();
             if (!audio.src || audio.src.trim() === "") {
                 if (songs.length > 0) {
-                    playSongByIndex(currentSongIndex);
+                    playSongById(songs[currentSongIndex].filePath);
                 }
             } else if (audio.paused || audio.currentTime <= 0) {
                 audio.play();
@@ -682,73 +696,14 @@ document.addEventListener("keydown", (e) => {
             e.preventDefault();
             if (songs.length === 0) return;
             currentSongIndex = getNextIndex();
-            playSongByIndex(currentSongIndex);
+            playSongById(songs[currentSongIndex].filePath);
             break;
 
         case "ArrowLeft":
             e.preventDefault();
             if (songs.length === 0) return;
             currentSongIndex = getPreviousIndex();
-            playSongByIndex(currentSongIndex);
-            break;
-
-        case "KeyN":
-            e.preventDefault();
-            if (songs.length === 0) return;
-            currentSongIndex = getNextIndex();
-            playSongByIndex(currentSongIndex);
-            break;
-
-        case "KeyP":
-            e.preventDefault();
-            if (songs.length === 0) return;
-            currentSongIndex = getPreviousIndex();
-            playSongByIndex(currentSongIndex);
-            break;
-
-        case "KeyM":
-            e.preventDefault();
-            if (isMuted) {
-                audio.volume = previousVolume;
-                volumeSlider.value = previousVolume * 100;
-                isMuted = false;
-            } else {
-                previousVolume = audio.volume;
-                audio.volume = 0;
-                volumeSlider.value = 0;
-                isMuted = true;
-            }
-            updateVolumeIcon(audio.volume);
-            break;
-
-        case "KeyL":
-            e.preventDefault();
-            if (songs.length === 0) return;
-            const currentSong = songs[currentSongIndex];
-            if (currentSong) {
-                currentSong.isLiked = !currentSong.isLiked;
-                updateCurrentSongUI(currentSong);
-                saveLikedSongs();
-                showNotification(currentSong.isLiked ? 'Added to favorites' : 'Removed from favorites', currentSong.isLiked ? 'success' : 'info');
-                
-                // If we are in favorites view, refresh the list to show the change
-                if (isFavoritesViewActive) {
-                    setTimeout(() => {
-                        renderFavoriteSongs();
-                    }, 300);
-                }
-            }
-            break;
-
-        case "KeyD":
-            e.preventDefault();
-            if (songs.length === 0) return;
-            const downloadBtn = document.getElementById("downloadSong");
-            if (downloadBtn) {
-                downloadBtn.click();
-            } else {
-                showNotification('Download feature not available', 'warning');
-            }
+            playSongById(songs[currentSongIndex].filePath);
             break;
 
         case "KeyS":
@@ -760,17 +715,6 @@ document.addEventListener("keydown", (e) => {
             e.preventDefault();
             document.getElementById("repeat").click();
             break;
-
-        case "KeyF":
-            e.preventDefault();
-            const favBtn = document.getElementById("showFavoritesBtn");
-            if (favBtn) {
-                favBtn.click();
-            } else {
-                showNotification('Favorites feature not available on this page', 'warning');
-            }
-            break;
-
     }
 });
 
@@ -857,23 +801,24 @@ document.getElementById("downloadSong").addEventListener("click", () => {
 });
 
 // Initialize app
-function initApp() {
+async function initApp() {
     // This function initializes components that are ALWAYS on the page.
     // Start with local songs to provide an immediate list while waiting for the API.
 
     // Load liked songs from storage and apply to local fallback list
     const likedSongsSet = loadLikedSongs();
+    const localSongs = await loadLocalSongs();
     localSongs.forEach(song => {
         if (likedSongsSet.has(song.filePath)) {
             song.isLiked = true;
         }
     });
 
+    // Shuffle localSongs for a different order on every load
     const shuffledLocalSongs = [...localSongs].sort(() => Math.random() - 0.5);
     songs = shuffledLocalSongs;
-    // songs = localSongs;
     lastSearchedSongs = [...shuffledLocalSongs];
-    // lastSearchedSongs = [...localSongs];
+    initialSongs = [...shuffledLocalSongs];
 
     // Add dynamic CSS styles for the app
     if (!document.getElementById('dynamicStyles')) {
@@ -1186,7 +1131,7 @@ async function fetchAndShowSuggestions(query) {
     }
 
     try {
-        const res = await fetch(`https://saavn.sumit.co/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=10`);
+        const res = await fetch(`${API_BASE_URL}/search/songs?query=${encodeURIComponent(query)}&page=1&limit=10`);
         if (!res.ok) throw new Error('Suggestion API failed');
         
         const data = await res.json();
@@ -1244,6 +1189,15 @@ function initHomePage() {
     const searchInput = document.getElementById("searchInput");
     const viewToggleBtns = document.querySelectorAll(".view-btn");
     const songItemContainer = document.getElementById("songList");
+    const songListTitle = document.getElementById('songListTitle');
+
+    // Always fetch fresh songs when navigating to the home page
+    searchSongsOnline(searchSongQuery);
+
+    // Reset song list title
+    if (songListTitle) {
+        songListTitle.textContent = "All Songs"; // Or whatever your default title is
+    }
 
     // View toggle functionality
     if (viewToggleBtns.length > 0 && songItemContainer) {
@@ -1283,9 +1237,8 @@ function initHomePage() {
                 if (isFavoritesViewActive) {
                     renderFavoriteSongs();
                 } else {
-                    // When input is cleared, show history instead of last search
-                    showSearchHistory();
-                    renderSongs(lastSearchedSongs);
+                    // When input is cleared, re-fetch the original API songs
+                    searchSongsOnline(searchSongQuery);
                 }
                 return;
             }
@@ -1335,15 +1288,6 @@ function initHomePage() {
                 suggestionsContainer.classList.remove('active');
             }
         });
-    }
-
-    // Initial song fetch for home page
-    // Check if we only have the local fallback songs
-    if (songs.length <= localSongs.length) {
-        searchSongsOnline(searchSongQuery);
-    } else {
-        // If we already have a list from a previous search, just render it
-        renderSongs(songs);
     }
 }
 
@@ -1451,7 +1395,7 @@ async function fetchArtistSongsUnlimited(artistId, artistName) {
 
         // Fetch songs page by page
         for (let page = 1; page <= maxPages; page++) {
-            const res = await fetch(`https://saavn.sumit.co/api/artists/${artistId}/songs?page=${page}&limit=${limit}`);
+            const res = await fetch(`${API_BASE_URL}/artists/${artistId}/songs?page=${page}&limit=${limit}`);
             if (!res.ok) throw new Error(`Failed to fetch artist songs, page ${page}`);
 
             const data = await res.json();
@@ -1507,7 +1451,7 @@ async function fetchArtistSongsUnlimited(artistId, artistName) {
 function createSongElement(song, index) {
     const songItem = document.createElement('div');
     songItem.className = 'songItem';
-    songItem.dataset.index = index;
+    songItem.dataset.songId = song.filePath;
     
     songItem.innerHTML = `
         <img src="${song.coverPath}" alt="${song.name}">
@@ -1515,7 +1459,7 @@ function createSongElement(song, index) {
             <span class="songName">${song.name}</span>
             <span class="artistName">${song.artist}</span>
         </div>
-        <div class="songItemPlay songPlay" data-index="${index}">
+        <div class="songItemPlay songPlay" data-song-id="${song.filePath}">
             <i class="fas fa-play-circle"></i>
         </div>
         ${song.isLiked ? '<i class="fas fa-heart liked"></i>' : '<i class="far fa-heart"></i>'}
@@ -1543,39 +1487,18 @@ function renderArtistCard(artist) {
     // Add click handler to load artist songs
     artistCard.addEventListener('click', async (e) => {
         e.preventDefault();
-        // Immediately navigate to home page
+        // Immediately navigate to home page, which will trigger initHomePage() and reset songs to initialSongs
         await loadPage('home.html', true, false);
         
-        // Set up the page for artist songs
-        const songListTitle = document.getElementById('songListTitle');
-        if (songListTitle) {
-            songListTitle.textContent = `Top Songs by ${artist.name}`;
-        }
-        
-        // Initialize empty songs array
-        songs = [];
-        lastSearchedSongs = [];
-        let collectedSongs = [];
-        let renderTimeout;
-        
-        // Function to render songs with debounce
-        const debouncedRender = () => {
-            clearTimeout(renderTimeout);
-            renderTimeout = setTimeout(() => {
-                songs = [...songs, ...collectedSongs];
-                lastSearchedSongs = [...songs];
-                renderSongs(songs);
-                collectedSongs = [];
-            }, 1000); // Wait 1 second before rendering
-        };
-        
-        // Start loading songs in the background
+        // Now fetch artist-specific songs
         try {
-            let page = 1;
-            let hasMore = true;
-            
-            while (hasMore) {
-                const res = await fetch(`https://saavn.sumit.co/api/artists/${artist.id}/songs?page=${page}&limit=50`);
+            showLoading(`Loading songs by ${artist.name}...`);
+            let allArtistSongs = [];
+            const limit = 50;
+            const maxPages = 10; // Limit to 10 pages for artist songs
+
+            for (let page = 1; page <= maxPages; page++) {
+                const res = await fetch(`${API_BASE_URL}/artists/${artist.id}/songs?page=${page}&limit=${limit}`);
                 if (!res.ok) throw new Error('Failed to fetch artist songs');
                 const data = await res.json();
                 
@@ -1592,44 +1515,40 @@ function renderArtistCard(artist) {
                     }))
                     .filter(song => song.filePath);
                 
-                if (newSongs.length > 0) {
-                    // Collect new songs
-                    collectedSongs.push(...newSongs);
-                    
-                    // If this is the first batch, render immediately
-                    if (songs.length === 0) {
-                        songs = [...newSongs];
-                        lastSearchedSongs = [...songs];
-                        renderSongs(songs);
-                        collectedSongs = [];
-                    } else {
-                        // Otherwise use debounced render
-                        debouncedRender();
-                    }
-                }
-                
-                // Check if we should continue loading more
-                hasMore = newSongs.length > 0 && page < 10; // Limit to 10 pages max
-                page++;
+                allArtistSongs.push(...newSongs);
+                if (newSongs.length === 0) break; // Stop if no more songs on this page
                 
                 // Small delay to prevent rate limiting
                 await new Promise(resolve => setTimeout(resolve, 300));
             }
-            
-            // Final render to ensure all songs are displayed
-            if (collectedSongs.length > 0) {
-                clearTimeout(renderTimeout);
-                songs = [...songs, ...collectedSongs];
+
+            if (allArtistSongs.length > 0) {
+                // Shuffle and limit results for performance
+                const shuffledArtistSongs = allArtistSongs.sort(() => Math.random() - 0.5);
+                songs = shuffledArtistSongs.slice(0, 300); // max 300 songs
                 lastSearchedSongs = [...songs];
-                renderSongs(songs);
-            }
-            
-            if (songs.length === 0) {
+                renderSongs(songs); // Render the artist-specific songs
+
+                const songListTitle = document.getElementById('songListTitle');
+                if (songListTitle) {
+                    songListTitle.textContent = `Top Songs by ${artist.name}`;
+                }
+            } else {
                 showNotification(`No songs found for ${artist.name}`, 'warning');
+                // If no songs found for artist, ensure home page defaults are shown
+                songs = [...initialSongs];
+                lastSearchedSongs = [...initialSongs];
+                renderSongs(songs);
             }
         } catch (error) {
             console.error('Error loading artist songs:', error);
             showNotification('Could not load songs for ' + artist.name, 'error');
+            // On error, ensure home page defaults are shown
+            songs = [...initialSongs];
+            lastSearchedSongs = [...initialSongs];
+            renderSongs(songs);
+        } finally {
+            hideLoading();
         }
     });
     
@@ -1648,7 +1567,7 @@ const searchArtists = async (query, isInitial = false) => {
     }
 
     try {
-        const res = await fetch(`https://saavn.sumit.co/api/search/artists?query=${encodeURIComponent(query)}&page=100&limit=100`);
+        const res = await fetch(`${API_BASE_URL}/search/artists?query=${encodeURIComponent(query)}&page=100&limit=100`);
         if (!res.ok) throw new Error('Artist search failed');
         const data = await res.json();
         console.log('Artist search response:', data); // Debug log
@@ -1770,27 +1689,6 @@ async function initPage(page) {
         case 'contact.html':
             initContactPage();
             break;
-        case 'electronic-music.html':
-            if (typeof window.initElectronicPage === 'function') {
-                window.initElectronicPage();
-            } else {
-                hideLoading();
-            }
-            break;
-        case 'gaming-music.html':
-            if (typeof window.initGamingPage === 'function') {
-                window.initGamingPage();
-            } else {
-                hideLoading();
-            }
-            break;
-        case 'youtube-music.html':
-            if (typeof window.initYouTubePage === 'function') {
-                window.initYouTubePage();
-            } else {
-                hideLoading();
-            }
-            break;
         case 'about.html':
             // No specific JS for about page, just hide the loader
             hideLoading();
@@ -1804,333 +1702,3 @@ async function initPage(page) {
 // Initialize the application's global components
 initApp();
 initTheme();
-
-// Navigation Event Handlers - Set up immediately since DOM is already loaded
-function initNavigation() {
-    // Handle navigation clicks (only elements with data-page attribute)
-    const navLinks = document.querySelectorAll('.nav-link[data-page]');
-    console.log('Found navigation links:', navLinks.length);
-    console.log('Navigation links:', Array.from(navLinks).map(link => `${link.textContent.trim()} -> ${link.dataset.page}`));
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const page = this.dataset.page;
-            console.log('Navigation clicked:', page);
-            if (page) {
-                loadPage(page);
-                // Close dropdown if it's open
-                const dropdownMenu = document.querySelector('.nav-dropdown-menu');
-                const dropdownToggle = document.querySelector('.dropdown-toggle[data-dropdown]');
-                if (dropdownMenu && dropdownToggle) {
-                    dropdownMenu.classList.remove('show');
-                    dropdownToggle.classList.remove('active');
-                }
-            }
-        });
-    });
-    
-    // Handle dropdown toggle (separate from navigation)
-    const dropdownToggle = document.querySelector('.dropdown-toggle[data-dropdown]');
-    const dropdownMenu = document.querySelector('.nav-dropdown-menu');
-    
-    console.log('Dropdown toggle found:', !!dropdownToggle);
-    console.log('Dropdown menu found:', !!dropdownMenu);
-    
-    if (dropdownToggle && dropdownMenu) {
-        console.log('Setting up dropdown toggle');
-        
-        // Handle clicks on the dropdown toggle
-        dropdownToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Dropdown toggle clicked');
-            const isOpen = dropdownMenu.classList.contains('show');
-            
-            if (isOpen) {
-                dropdownMenu.classList.remove('show');
-                dropdownToggle.classList.remove('active');
-            } else {
-                dropdownMenu.classList.add('show');
-                dropdownToggle.classList.add('active');
-            }
-        });
-        
-        // Handle touch events for mobile
-        dropdownToggle.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Dropdown toggle touched');
-            const isOpen = dropdownMenu.classList.contains('show');
-            
-            if (isOpen) {
-                dropdownMenu.classList.remove('show');
-                dropdownToggle.classList.remove('active');
-            } else {
-                dropdownMenu.classList.add('show');
-                dropdownToggle.classList.add('active');
-            }
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.nav-dropdown')) {
-                dropdownMenu.classList.remove('show');
-                dropdownToggle.classList.remove('active');
-            }
-        });
-        
-        // Close dropdown when touching outside (mobile)
-        document.addEventListener('touchstart', function(e) {
-            if (!e.target.closest('.nav-dropdown')) {
-                dropdownMenu.classList.remove('show');
-                dropdownToggle.classList.remove('active');
-            }
-        });
-    } else {
-        console.log('Dropdown elements not found');
-    }
-}
-
-// Initialize navigation
-initNavigation();
-
-// Handle browser back/forward
-window.addEventListener('popstate', function(e) {
-    if (e.state && e.state.page) {
-        loadPage(e.state.page, false);
-    } else {
-        loadPage('home.html', false);
-    }
-});
-
-// Genre Pages Functions
-// Electronic Music Page Functions
-function searchElectronicMusic(query) {
-  if (typeof searchSongsOnline === 'function') {
-    searchSongsOnline(query);
-    // Update title to reflect search
-    const title = document.getElementById('songListTitle');
-    if (title) {
-      title.textContent = `${query.charAt(0).toUpperCase() + query.slice(1)} Music`;
-    }
-  }
-}
-
-// Quick search presets for electronic music
-function searchElectronicPreset(genre) {
-  const queries = {
-    'edm': 'electronic dance music EDM beats',
-    'house': 'house music electronic beats',
-    'techno': 'techno electronic music beats',
-    'dubstep': 'dubstep electronic music drops',
-    'trance': 'trance electronic music progressive',
-    'synthwave': 'synthwave retrowave electronic music',
-    'chillstep': 'chillstep electronic chill music',
-    'ambient': 'ambient electronic music atmospheric'
-  };
-  
-  const query = queries[genre] || `${genre} electronic music`;
-  searchElectronicMusic(query);
-}
-
-window.initElectronicPage = function() {
-  // Set up search functionality
-  const searchInput = document.getElementById('genreSearchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      const query = e.target.value.trim();
-      if (query.length > 2) {
-        searchElectronicMusic(`${query} electronic music`);
-      } else if (query.length === 0) {
-        // Load default electronic music when search is cleared
-        searchElectronicMusic('electronic music beats');
-      }
-    });
-    
-    searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const query = searchInput.value.trim();
-        if (query) {
-          searchElectronicMusic(`${query} electronic music`);
-        } else {
-          searchElectronicMusic('electronic music beats');
-        }
-      }
-    });
-  }
-  
-  // Set up category card clicks
-  document.querySelectorAll('.category-card').forEach(card => {
-    card.addEventListener('click', function() {
-      const onclick = this.getAttribute('onclick');
-      if (onclick && onclick.includes('searchElectronicMusic')) {
-        eval(onclick);
-      }
-    });
-  });
-  
-  // Load electronic music by default
-  searchElectronicMusic('electronic music beats');
-  
-  // Hide loading overlay
-  hideLoading();
-};
-
-// Gaming Music Page Functions
-function searchGamingMusic(query) {
-  if (typeof searchSongsOnline === 'function') {
-    searchSongsOnline(query);
-    // Update title to reflect search
-    const title = document.getElementById('songListTitle');
-    if (title) {
-      title.textContent = `${query.charAt(0).toUpperCase() + query.slice(1)} Tracks`;
-    }
-  }
-}
-
-// Quick search presets for gaming music
-function searchGamingPreset(genre) {
-  const queries = {
-    'epic': 'epic gaming music orchestral cinematic',
-    'battle': 'battle music gaming epic intense',
-    'boss': 'boss fight music gaming dramatic',
-    'ambient': 'ambient gaming music atmospheric background',
-    'victory': 'victory music gaming triumphant',
-    'action': 'action gaming music fast paced intense',
-    'adventure': 'adventure gaming music exploration',
-    'horror': 'horror gaming music dark scary atmospheric'
-  };
-  
-  const query = queries[genre] || `${genre} gaming music`;
-  searchGamingMusic(query);
-}
-
-window.initGamingPage = function() {
-  // Set up search functionality
-  const searchInput = document.getElementById('genreSearchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      const query = e.target.value.trim();
-      if (query.length > 2) {
-        searchGamingMusic(`${query} gaming music`);
-      } else if (query.length === 0) {
-        // Load default gaming music when search is cleared
-        searchGamingMusic('epic gaming music beats');
-      }
-    });
-    
-    searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const query = searchInput.value.trim();
-        if (query) {
-          searchGamingMusic(`${query} gaming music`);
-        } else {
-          searchGamingMusic('epic gaming music beats');
-        }
-      }
-    });
-  }
-  
-  // Set up genre tag clicks
-  document.querySelectorAll('.genre-tag').forEach(tag => {
-    tag.addEventListener('click', function() {
-      const onclick = this.getAttribute('onclick');
-      if (onclick && onclick.includes('searchGamingMusic')) {
-        eval(onclick);
-      }
-    });
-  });
-  
-  // Load gaming music by default
-  searchGamingMusic('epic gaming music beats');
-  
-  // Hide loading overlay
-  hideLoading();
-};
-
-// YouTube Music Page Functions
-function searchYouTubeMusic(query) {
-  if (typeof searchSongsOnline === 'function') {
-    searchSongsOnline(query);
-    // Update title to reflect search
-    const title = document.getElementById('songListTitle');
-    if (title) {
-      title.textContent = `${query.charAt(0).toUpperCase() + query.slice(1)} Music`;
-    }
-  }
-}
-
-// Quick search presets for YouTube music
-function searchYouTubePreset(mood) {
-  const queries = {
-    'upbeat': 'upbeat background music youtube energetic',
-    'chill': 'chill background music youtube relaxing',
-    'cinematic': 'cinematic background music youtube dramatic',
-    'corporate': 'corporate background music youtube professional',
-    'acoustic': 'acoustic background music youtube organic',
-    'electronic': 'electronic background music youtube modern',
-    'ambient': 'ambient background music youtube atmospheric',
-    'motivational': 'motivational background music youtube inspiring'
-  };
-  
-  const query = queries[mood] || `${mood} background music youtube`;
-  searchYouTubeMusic(query);
-}
-
-window.initYouTubePage = function() {
-  // Set up search functionality
-  const searchInput = document.getElementById('genreSearchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      const query = e.target.value.trim();
-      if (query.length > 2) {
-        searchYouTubeMusic(`${query} background music`);
-      } else if (query.length === 0) {
-        // Load default YouTube music when search is cleared
-        searchYouTubeMusic('youtube background music');
-      }
-    });
-    
-    searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const query = searchInput.value.trim();
-        if (query) {
-          searchYouTubeMusic(`${query} background music`);
-        } else {
-          searchYouTubeMusic('youtube background music');
-        }
-      }
-    });
-  }
-  
-  // Set up mood tag clicks
-  document.querySelectorAll('.mood-tag').forEach(tag => {
-    tag.addEventListener('click', function() {
-      const onclick = this.getAttribute('onclick');
-      if (onclick && onclick.includes('searchYouTubeMusic')) {
-        eval(onclick);
-      }
-    });
-  });
-  
-  // Set up niche item clicks
-  document.querySelectorAll('.niche-item').forEach(item => {
-    item.addEventListener('click', function() {
-      const onclick = this.getAttribute('onclick');
-      if (onclick && onclick.includes('searchYouTubeMusic')) {
-        eval(onclick);
-      }
-    });
-  });
-  
-  // Load YouTube music by default
-  searchYouTubeMusic('youtube background music');
-  
-  // Hide loading overlay
-  hideLoading();
-};
