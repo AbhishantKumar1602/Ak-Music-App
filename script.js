@@ -320,9 +320,11 @@ function renderFavoriteSongs() {
 
     // Iterate over the original 'songs' array to preserve the index
     songs.forEach((song, index) => {
-        if (song.isLiked) {
+        if (song.isLiked) { 
             // const displayName = song.name.length > 35 ? song.name.substring(0, 35) + "..." : song.name;
-            const displayName = song.name
+            // const displayName = song.name;
+            const displayName = song.name.length > 25 ? `<marquee direction="left" scrollamount="3">${song.name}</marquee>` : song.name;
+
             const songItem = document.createElement("div");
             songItem.className = "songItem fade-in";
             songItem.dataset.songId = song.filePath; // Use the song's filepath as the ID
@@ -491,10 +493,10 @@ function updateVolumeIcon(volume) {
     }
 }
 
-// Enhanced API search with multiple pages for more songs
 async function searchSongsOnline(query) {
     try {
         showLoading();
+        const likedSongsSet = loadLikedSongs();
         let allSongs = [];
         const maxPages = 10; // Max pages to fetch in background
         const initialPages = 2; // Show 1 or 2 pages first
@@ -506,12 +508,16 @@ async function searchSongsOnline(query) {
         const firstData = await firstRes.json();
         if (!firstData.data.results || firstData.data.results.length === 0) throw new Error("No songs found");
 
-        let firstPageSongs = firstData.data.results.map(song => ({
-            name: song.name || 'Unknown Song',
-            artist: song.artists?.primary?.[0]?.name || 'Unknown Artist',
-            filePath: song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "",
-            coverPath: song.image?.length ? song.image[song.image.length - 1].url : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
-        })).filter(song => song.filePath);
+        let firstPageSongs = firstData.data.results.map(song => {
+            const filePath = song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "";
+            return {
+                name: song.name || 'Unknown Song',
+                artist: song.artists?.primary?.[0]?.name || 'Unknown Artist',
+                filePath: filePath,
+                coverPath: song.image?.length ? song.image[song.image.length - 1].url : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
+                isLiked: likedSongsSet.has(filePath)
+            };
+        }).filter(song => song.filePath);
 
         allSongs = allSongs.concat(firstPageSongs);
 
@@ -534,18 +540,21 @@ async function searchSongsOnline(query) {
                 .then(res => res.ok ? res.json() : null)
                 .then(data => {
                     if (data && data.data.results && data.data.results.length > 0) {
-                        const secondPageSongs = data.data.results.map(song => ({
-                            name: song.name || 'Unknown Song',
-                            artist: song.artists?.primary?.[0]?.name || 'Unknown Artist',
-                            filePath: song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "",
-                            coverPath: song.image?.length ? song.image[song.image.length - 1].url : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
-                        })).filter(song => song.filePath);
+                        const secondPageSongs = data.data.results.map(song => {
+                            const filePath = song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "";
+                            return {
+                                name: song.name || 'Unknown Song',
+                                artist: song.artists?.primary?.[0]?.name || 'Unknown Artist',
+                                filePath: filePath,
+                                coverPath: song.image?.length ? song.image[song.image.length - 1].url : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
+                                isLiked: likedSongsSet.has(filePath)
+                            };
+                        }).filter(song => song.filePath);
                         // Append to list and render new songs
                         allSongs = allSongs.concat(secondPageSongs);
-                        // Shuffle after adding new songs
-                        const shuffledSongs = [...allSongs].sort(() => Math.random() - 0.5);
-                        songs = shuffledSongs;
-                        lastSearchedSongs = [...shuffledSongs];
+                        // Not shuffling anymore to preserve playing index
+                        songs.push(...secondPageSongs);
+                        lastSearchedSongs.push(...secondPageSongs);
                         appendSongsToList(secondPageSongs);
                     }
                 });
@@ -557,17 +566,20 @@ async function searchSongsOnline(query) {
                 .then(res => res.ok ? res.json() : null)
                 .then(data => {
                     if (data && data.data.results && data.data.results.length > 0) {
-                        const moreSongs = data.data.results.map(song => ({
-                            name: song.name || 'Unknown Song',
-                            artist: song.artists?.primary?.[0]?.name || 'Unknown Artist',
-                            filePath: song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "",
-                            coverPath: song.image?.length ? song.image[song.image.length - 1].url : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
-                        })).filter(song => song.filePath);
+                        const moreSongs = data.data.results.map(song => {
+                             const filePath = song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "";
+                            return {
+                                name: song.name || 'Unknown Song',
+                                artist: song.artists?.primary?.[0]?.name || 'Unknown Artist',
+                                filePath: filePath,
+                                coverPath: song.image?.length ? song.image[song.image.length - 1].url : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
+                                isLiked: likedSongsSet.has(filePath)
+                            };
+                        }).filter(song => song.filePath);
                         allSongs = allSongs.concat(moreSongs);
-                        // Shuffle after adding new songs
-                        const shuffledSongs = [...allSongs].sort(() => Math.random() - 0.5);
-                        songs = shuffledSongs;
-                        lastSearchedSongs = [...shuffledSongs];
+                        // Not shuffling anymore to preserve playing index
+                        songs.push(...moreSongs);
+                        lastSearchedSongs.push(...moreSongs);
                         appendSongsToList(moreSongs);
                     }
                 });
@@ -620,16 +632,32 @@ function appendSongsToList(newSongs) {
 // Enhanced navigation with shuffle support
 function getNextIndex() {
     if (isShuffled) {
-        return Math.floor(Math.random() * songs.length);
+        if (songs.length <= 1) {
+            return 0;
+        }
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * songs.length);
+        } while (newIndex === currentSongIndex);
+        return newIndex;
+    } else {
+        return (currentSongIndex + 1) % songs.length;
     }
-    return (currentSongIndex + 1) % songs.length;
 }
 
 function getPreviousIndex() {
     if (isShuffled) {
-        return Math.floor(Math.random() * songs.length);
+        if (songs.length <= 1) {
+            return 0;
+        }
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * songs.length);
+        } while (newIndex === currentSongIndex);
+        return newIndex;
+    } else {
+        return (currentSongIndex - 1 + songs.length) % songs.length;
     }
-    return (currentSongIndex - 1 + songs.length) % songs.length;
 }
 
 // Previous button
@@ -715,11 +743,20 @@ document.addEventListener("keydown", (e) => {
             e.preventDefault();
             document.getElementById("repeat").click();
             break;
+
+        case "KeyL":
+            e.preventDefault();
+            document.getElementById("likeSong").click();
+            break;            
     }
 });
 
 // Enhanced download functionality
 document.getElementById("downloadSong").addEventListener("click", () => {
+    if (!audio.src) {
+        showNotification('Select first to download', 'warning');
+        return;
+    }
     if (!songs[currentSongIndex] || !songs[currentSongIndex].filePath) {
         showNotification('No song selected for download', 'warning');
         return;
@@ -1011,19 +1048,28 @@ async function initApp() {
 
     // Player controls that are always present
     const shufflebtn = document.getElementById("shuffle");
+    const repeatbtn = document.getElementById("repeat");
+
+    // Load and apply player settings from localStorage
+    isShuffled = localStorage.getItem('player_isShuffled') === 'true';
+    isRepeating = localStorage.getItem('player_isRepeating') === 'true';
+
     if (shufflebtn) {
+        shufflebtn.classList.toggle('active', isShuffled);
         shufflebtn.addEventListener("click", (e) => {
             isShuffled = !isShuffled;
             e.currentTarget.classList.toggle('active', isShuffled);
+            localStorage.setItem('player_isShuffled', isShuffled);
             showNotification(isShuffled ? 'Shuffle enabled' : 'Shuffle disabled', 'info');
         });
     }
 
-    const repeatbtn = document.getElementById("repeat");
     if (repeatbtn) {
+        repeatbtn.classList.toggle('active', isRepeating);
         repeatbtn.addEventListener("click", (e) => {
             isRepeating = !isRepeating;
             e.currentTarget.classList.toggle('active', isRepeating);
+            localStorage.setItem('player_isRepeating', isRepeating);
             showNotification(isRepeating ? 'Repeat enabled' : 'Repeat disabled', 'info');
         });
     }
@@ -1389,6 +1435,7 @@ function initContactPage() {
 async function fetchArtistSongsUnlimited(artistId, artistName) {
     try {
         showLoading(`Loading songs by ${artistName}...`);
+        const likedSongsSet = loadLikedSongs();
         let allSongs = [];
         const limit = 50;       // API limit per page
         const maxPages = 20;    // Maximum pages to fetch to avoid overload
@@ -1399,16 +1446,18 @@ async function fetchArtistSongsUnlimited(artistId, artistName) {
             if (!res.ok) throw new Error(`Failed to fetch artist songs, page ${page}`);
 
             const data = await res.json();
-            const songsOnPage = (data.data?.songs || []).map(song => ({
-                name: song.name || 'Unknown Song',
-                artist: artistName,
-                filePath: song.downloadUrl?.length
-                    ? song.downloadUrl[song.downloadUrl.length - 1].url
-                    : "",
-                coverPath: song.image?.length
-                    ? song.image[song.image.length - 1].url.replace('150x150', '500x500')
-                    : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
-            })).filter(song => song.filePath);
+            const songsOnPage = (data.data?.songs || []).map(song => {
+                const filePath = song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "";
+                return {
+                    name: song.name || 'Unknown Song',
+                    artist: artistName,
+                    filePath: filePath,
+                    coverPath: song.image?.length
+                        ? song.image[song.image.length - 1].url.replace('150x150', '500x500')
+                        : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
+                    isLiked: likedSongsSet.has(filePath)
+                };
+            }).filter(song => song.filePath);
 
             if (songsOnPage.length === 0) break; // Stop if no songs found on this page
 
@@ -1493,6 +1542,7 @@ function renderArtistCard(artist) {
         // Now fetch artist-specific songs
         try {
             showLoading(`Loading songs by ${artist.name}...`);
+            const likedSongsSet = loadLikedSongs();
             let allArtistSongs = [];
             const limit = 50;
             const maxPages = 10; // Limit to 10 pages for artist songs
@@ -1503,16 +1553,18 @@ function renderArtistCard(artist) {
                 const data = await res.json();
                 
                 const newSongs = (data.data?.songs || [])
-                    .map(song => ({
-                        name: song.name || 'Unknown Song',
-                        artist: artist.name,
-                        filePath: song.downloadUrl?.length
-                            ? song.downloadUrl[song.downloadUrl.length - 1].url
-                            : "",
-                        coverPath: song.image?.length
-                            ? song.image[song.image.length - 1].url.replace('150x150', '500x500')
-                            : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
-                    }))
+                    .map(song => {
+                        const filePath = song.downloadUrl?.length ? song.downloadUrl[song.downloadUrl.length - 1].url : "";
+                        return {
+                            name: song.name || 'Unknown Song',
+                            artist: artist.name,
+                            filePath: filePath,
+                            coverPath: song.image?.length
+                                ? song.image[song.image.length - 1].url.replace('150x150', '500x500')
+                                : "https://via.placeholder.com/60x60/6366f1/ffffff?text=🎵",
+                            isLiked: likedSongsSet.has(filePath)
+                        };
+                    })
                     .filter(song => song.filePath);
                 
                 allArtistSongs.push(...newSongs);

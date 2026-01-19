@@ -517,7 +517,7 @@
 
 
 
-  <script src="script.js"></script>
+  <script src="script.js?v=1.1"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const content = document.getElementById("pageContent");
@@ -526,6 +526,10 @@
       const mobileMenuToggle = document.getElementById('mobileMenuToggle');
 
       function loadPage(page, push = true) {
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput) {
+            searchInput.value = "";
+        }
         const loadingOverlay = document.getElementById("loadingOverlay");
         const loadingText = loadingOverlay?.querySelector("p");
         
